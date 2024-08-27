@@ -92,8 +92,7 @@ namespace GwentEngine
                         double d;
                         if (!double.TryParse(value, out d))
                             errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, "Number format"));
-                        else
-                            tokens.Add(new Token(TokenType.Number, value, stream.Location));
+                        tokens.Add(new Token(TokenType.Number, value, stream.Location));
                         continue;
                     }
 
@@ -204,6 +203,10 @@ namespace GwentEngine
                     {
                         // read decimal part
                         number += '.';
+                        if(EOL || !char.IsDigit(Peek()))
+                        { 
+                            return false;
+                        }
                         while (!EOL && char.IsDigit(Peek()))
                             number += ReadAny();
                     }

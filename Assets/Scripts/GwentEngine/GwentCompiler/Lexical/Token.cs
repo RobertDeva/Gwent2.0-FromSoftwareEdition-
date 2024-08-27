@@ -54,6 +54,8 @@ namespace GwentEngine
 
             public const string And = "And"; // &&
             public const string Or = "Or"; // ||
+            public const string Concatenation = "@"; // Concatenation Symbol
+            public const string ConcatenationWithSpace = "@@"; // Concatenation
             public const string GreatherThan = "GreatherThan"; // >
             public const string LessThan = "LessThan"; // <
             public const string Equal = "Equal"; // ==
@@ -77,6 +79,15 @@ namespace GwentEngine
             public const string attack = "attack"; // attack
             public const string description = "description"; // description
             public const string positions = "positions"; // positions
+            public const string For = "for"; // cicle for
+            public const string While = "while"; // cicle while
+            public const string If = "if"; // keyword if
+            public const string Else = "else"; // keyword else
+            public const string In = "in"; // keyword in
+            public const string String = "string"; // keyword string
+            public const string Bool = "bool"; // keyword bool
+            public const string context = "context";
+
         }
     }
 }
