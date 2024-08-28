@@ -10,11 +10,11 @@ namespace GwentEngine
         {
             public Scope? Parent;
 
-            public List<string> positions;
+            public List<string> range;
 
             public Scope()
             {
-                positions = new List<string>();
+                range = new List<string>();
             }
 
             public Scope CreateChild()

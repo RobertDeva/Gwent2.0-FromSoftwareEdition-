@@ -18,7 +18,7 @@ namespace GwentEngine
                 Right.Evaluate();
                 Left.Evaluate();
 
-                Value = (double)Right.Value - (double)Left.Value;
+                Value = (double)Left.Value - (double)Right.Value;
             }
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)

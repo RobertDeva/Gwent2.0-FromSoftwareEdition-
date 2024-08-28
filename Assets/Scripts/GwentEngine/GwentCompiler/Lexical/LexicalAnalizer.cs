@@ -22,13 +22,17 @@ namespace GwentEngine
                         __LexicalProcess.RegisterOperator("*", TokenValues.Mul);
                         __LexicalProcess.RegisterOperator("-", TokenValues.Sub);
                         __LexicalProcess.RegisterOperator("/", TokenValues.Div);
+                        __LexicalProcess.RegisterOperator("%", TokenValues.Resto);
                         __LexicalProcess.RegisterOperator("^", TokenValues.Pow);
                         __LexicalProcess.RegisterOperator("++", TokenValues.Sucessor);
                         __LexicalProcess.RegisterOperator("--", TokenValues.Predecessor);
+                        __LexicalProcess.RegisterOperator("@", TokenValues.Concatenation);
+                        __LexicalProcess.RegisterOperator("@@", TokenValues.ConcatenationWithSpace);
                         __LexicalProcess.RegisterOperator("&&", TokenValues.And);
                         __LexicalProcess.RegisterOperator("||", TokenValues.Or);
                         __LexicalProcess.RegisterOperator("=", TokenValues.Assign);
                         __LexicalProcess.RegisterOperator("==", TokenValues.Equal);
+                        __LexicalProcess.RegisterOperator("!=", TokenValues.Diferent);
                         __LexicalProcess.RegisterOperator(">", TokenValues.GreatherThan);
                         __LexicalProcess.RegisterOperator("<", TokenValues.LessThan);
                         __LexicalProcess.RegisterOperator(">=", TokenValues.GreatherEqual);
@@ -49,13 +53,12 @@ namespace GwentEngine
 
                         __LexicalProcess.RegisterKeyword("Card", TokenValues.Card);
                         __LexicalProcess.RegisterKeyword("Effect", TokenValues.Effect);
-                        __LexicalProcess.RegisterKeyword("attack", TokenValues.attack);
+                        __LexicalProcess.RegisterKeyword("power", TokenValues.power);
                         __LexicalProcess.RegisterKeyword("Faction", TokenValues.Faction);
                         __LexicalProcess.RegisterKeyword("CardTipe", TokenValues.CardTipe);
                         __LexicalProcess.RegisterKeyword("Rank", TokenValues.Rank);
-                        __LexicalProcess.RegisterKeyword("Position", TokenValues.Position);
+                        __LexicalProcess.RegisterKeyword("Range", TokenValues.Range);
                         __LexicalProcess.RegisterKeyword("description", TokenValues.description);
-                        __LexicalProcess.RegisterKeyword("positions", TokenValues.positions);
                     }
 
                     return __LexicalProcess;

@@ -20,6 +20,11 @@ namespace GwentEngine
 
     }
 
+    public class SpecialCard : Card
+    {
+    }
+
+
     public enum Faction
     {
         DarkSoul,

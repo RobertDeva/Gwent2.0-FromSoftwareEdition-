@@ -33,9 +33,10 @@ namespace GwentEngine
 
         public enum TokenType
         {
-            Unknwon,
+            Unknown,
             Number,
             Text,
+            Bool,
             Keyword,
             Identifier,
             Symbol
@@ -48,17 +49,19 @@ namespace GwentEngine
             public const string Sub = "Subtract"; // -
             public const string Mul = "Multiplication"; // *
             public const string Div = "Division"; // /
+            public const string Resto = "Resto"; // %
             public const string Pow = "Potence"; // ^
             public const string Sucessor = "Sucessor"; // ++
             public const string Predecessor = "Predecessor"; // --
 
             public const string And = "And"; // &&
             public const string Or = "Or"; // ||
-            public const string Concatenation = "@"; // Concatenation Symbol
-            public const string ConcatenationWithSpace = "@@"; // Concatenation
-            public const string GreatherThan = "GreatherThan"; // >
+            public const string Concatenation = "Concatenation"; // @
+            public const string ConcatenationWithSpace = "ConcatenationWithSpace"; // @@
+            public const string GreatherThan = "Greather"; // >
             public const string LessThan = "LessThan"; // <
             public const string Equal = "Equal"; // ==
+            public const string Diferent = "Diferent"; // !=
             public const string GreatherEqual = "GreatherEqual"; // >=
             public const string LessEqual = "LessEqual"; // <=
             public const string Assign = "Assign"; // =
@@ -74,11 +77,10 @@ namespace GwentEngine
             public const string Effect = "Effect"; // Effect
             public const string Faction = "Faction"; // Faction
             public const string CardTipe = "CardTipe"; // CardTipe
-            public const string Position = "Position"; // Position
             public const string Rank = "Rank"; // Rank
-            public const string attack = "attack"; // attack
+            public const string power = "power"; // attack
             public const string description = "description"; // description
-            public const string positions = "positions"; // positions
+            public const string Range = "Range"; // positions
             public const string For = "for"; // cicle for
             public const string While = "while"; // cicle while
             public const string If = "if"; // keyword if
@@ -86,6 +88,7 @@ namespace GwentEngine
             public const string In = "in"; // keyword in
             public const string String = "string"; // keyword string
             public const string Bool = "bool"; // keyword bool
+            public const string Int = "int"; // keyword int
             public const string context = "context";
 
         }

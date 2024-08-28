@@ -9,6 +9,7 @@ namespace GwentEngine
             Anytype,
             Text,
             Number,
+            Bool,
             ErrorType
         }
     }

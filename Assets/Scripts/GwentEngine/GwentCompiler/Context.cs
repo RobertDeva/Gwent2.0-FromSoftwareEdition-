@@ -8,12 +8,13 @@ namespace GwentEngine
     {
         public class Context
         {
-            public List<string> positions;
+            public List<string> range = new List<string>(){ "Melee" , "Range" , "Siege" };
+            public List<string> effects;
             public List<string> cards;
 
             public Context()
-            {
-                positions = new List<string>();
+            {     
+                effects = new List<string>();
                 cards = new List<string>();
             }
 

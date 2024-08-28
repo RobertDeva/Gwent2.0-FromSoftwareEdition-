@@ -6,21 +6,23 @@ namespace GwentEngine
 {
     namespace GwentCompiler
     {
-        public class Div : BinaryExpression
+        public class LessEqual : BinaryExpression
         {
             public override ExpressionType Type { get; set; }
             public override object? Value { get; set; }
 
-            public Div(CodeLocation location) : base(location) { }
+            public LessEqual(CodeLocation location) : base(location) { }
 
             public override void Evaluate()
             {
                 Right.Evaluate();
                 Left.Evaluate();
 
-                Value = (double)Left.Value / (double)Right.Value;
+                if ((double)Left.Value <= (double)Right.Value)
+                    Value = true;
+                else
+                    Value = false;
             }
-
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
                 bool right = Right.CheckSemantic(context, scope, errors);
@@ -32,15 +34,14 @@ namespace GwentEngine
                     return false;
                 }
 
-                Type = ExpressionType.Number;
-                return right && left;
+                Type = ExpressionType.Bool;
+                return left && right;
             }
-
             public override string ToString()
             {
                 if (Value == null)
                 {
-                    return String.Format("({0} / {1})", Left, Right);
+                    return String.Format("({0} <= {1})", Left, Right);
                 }
                 return Value.ToString();
             }

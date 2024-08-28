@@ -6,19 +6,19 @@ namespace GwentEngine
 {
     namespace GwentCompiler
     {
-        public class Div : BinaryExpression
+        public class Resto : BinaryExpression
         {
             public override ExpressionType Type { get; set; }
             public override object? Value { get; set; }
 
-            public Div(CodeLocation location) : base(location) { }
+            public Resto(CodeLocation location) : base(location) { }
 
             public override void Evaluate()
             {
                 Right.Evaluate();
                 Left.Evaluate();
 
-                Value = (double)Left.Value / (double)Right.Value;
+                Value = (double)Right.Value % (double)Left.Value;
             }
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
@@ -40,7 +40,7 @@ namespace GwentEngine
             {
                 if (Value == null)
                 {
-                    return String.Format("({0} / {1})", Left, Right);
+                    return String.Format("({0} % {1})", Left, Right);
                 }
                 return Value.ToString();
             }
