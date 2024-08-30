@@ -39,6 +39,7 @@ namespace GwentEngine
                         __LexicalProcess.RegisterOperator("<=", TokenValues.LessEqual);
 
 
+                        __LexicalProcess.RegisterOperator(".", TokenValues.InnerSeparator);
                         __LexicalProcess.RegisterOperator(",", TokenValues.ValueSeparator);
                         __LexicalProcess.RegisterOperator(";", TokenValues.StatementSeparator);
                         __LexicalProcess.RegisterOperator("(", TokenValues.OpenBracket);
@@ -56,7 +57,7 @@ namespace GwentEngine
                         __LexicalProcess.RegisterKeyword("Effect", TokenValues.Effect);
                         __LexicalProcess.RegisterKeyword("power", TokenValues.power);
                         __LexicalProcess.RegisterKeyword("Faction", TokenValues.Faction);
-                        __LexicalProcess.RegisterKeyword("CardTipe", TokenValues.CardTipe);
+                        __LexicalProcess.RegisterKeyword("CardType", TokenValues.CardType);
                         __LexicalProcess.RegisterKeyword("Rank", TokenValues.Rank);
                         __LexicalProcess.RegisterKeyword("true", TokenValues.True);
                         __LexicalProcess.RegisterKeyword("false", TokenValues.False);

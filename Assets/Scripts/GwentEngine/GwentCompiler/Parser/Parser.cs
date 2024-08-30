@@ -76,6 +76,7 @@ namespace GwentEngine
                 if (fac == null)
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Invalid assignament"));
+                    return card;
                 }
                 card.faction = fac;
                 if (!Stream.Next(TokenValues.type))
@@ -89,7 +90,8 @@ namespace GwentEngine
                 CardType typ = ParseCardType(errors);
                 if (typ == null)
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Invalid assignament")); 
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Invalid assignament"));
+                    return card;
                 }
                 card.type = typ;
                 if (!Stream.Next(TokenValues.rank))
@@ -104,6 +106,7 @@ namespace GwentEngine
                 if (rank == null)
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Invalid assignament"));
+                    return card;
                 }
                 card.rank = rank;
                 if (!Stream.Next(TokenValues.range))

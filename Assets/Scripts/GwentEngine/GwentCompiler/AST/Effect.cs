@@ -7,14 +7,15 @@ namespace GwentEngine
     {
         public class Effect : ASTNode
         {
-
+            public string Id { get; set; }
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
                 throw new System.NotImplementedException();
             }
 
-            public Effect(CodeLocation location) : base(location)
+            public Effect(string id, CodeLocation location) : base(location)
             {
+                Id = id;
                 Location = location;
             }
 

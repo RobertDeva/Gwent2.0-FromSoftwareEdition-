@@ -7,10 +7,11 @@ namespace GwentEngine
     {
         //public Player Owner { get; }
         public string Name { get; }
-        public int Power { get; }
-        public Faction CardFaction { get; }
-        public CardType Type { get;}
-        public Rank CardRank { get; }
+        public int power { get; }
+        public Faction faction { get; }
+        public CardType type { get;}
+        public Rank rank { get; }
+        public List<Position>? range;
         //public Effect;
         public string description;
     }
@@ -36,7 +37,6 @@ namespace GwentEngine
         Leader,
         Unit,
         Weather,
-        ClearwWeather,
         Upgrade
     }
     public enum Position

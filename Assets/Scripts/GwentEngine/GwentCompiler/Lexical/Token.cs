@@ -65,18 +65,20 @@ namespace GwentEngine
             public const string GreatherEqual = "GreatherEqual"; // >=
             public const string LessEqual = "LessEqual"; // <=
             public const string Assign = "Assign"; // =
+            public const string InnerSeparator = "InnerSeparetor";
             public const string ValueSeparator = "ValueSeparator"; // ,
             public const string StatementSeparator = "StatementSeparator"; // ;
 
             public const string OpenBracket = "OpenBracket"; // (
             public const string ClosedBracket = "ClosedBracket"; // )
+
             public const string OpenCurlyBraces = "OpenCurlyBraces"; // {
             public const string ClosedCurlyBraces = "ClosedCurlyBraces"; // }
 
             public const string Card = "Card"; // Card
             public const string Effect = "Effect"; // Effect
             public const string Faction = "Faction"; // Faction
-            public const string CardTipe = "CardTipe"; // CardTipe
+            public const string CardType = "CardType"; // CardTipe
             public const string Rank = "Rank"; // Rank
             public const string power = "power"; // attack
             public const string faction = "faction"; // faction
