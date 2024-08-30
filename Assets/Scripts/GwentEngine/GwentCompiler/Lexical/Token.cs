@@ -79,8 +79,13 @@ namespace GwentEngine
             public const string CardTipe = "CardTipe"; // CardTipe
             public const string Rank = "Rank"; // Rank
             public const string power = "power"; // attack
+            public const string faction = "faction"; // faction
+            public const string type = "type"; // type
+            public const string rank = "rank"; // rank
+            public const string effect = "effect"; //effect
             public const string description = "description"; // description
-            public const string Range = "Range"; // positions
+            public const string Name = "Name"; // Name
+            public const string range = "range"; // positions
             public const string For = "for"; // cicle for
             public const string While = "while"; // cicle while
             public const string If = "if"; // keyword if
@@ -89,6 +94,8 @@ namespace GwentEngine
             public const string String = "string"; // keyword string
             public const string Bool = "bool"; // keyword bool
             public const string Int = "int"; // keyword int
+            public const string True = "true"; // keyword true
+            public const string False = "false"; // keyword false
             public const string context = "context";
 
         }

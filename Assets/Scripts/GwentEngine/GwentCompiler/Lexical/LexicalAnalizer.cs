@@ -52,12 +52,21 @@ namespace GwentEngine
                         __LexicalProcess.RegisterText("\"", "\"");
 
                         __LexicalProcess.RegisterKeyword("Card", TokenValues.Card);
+                        __LexicalProcess.RegisterKeyword("Name", TokenValues.Name);
                         __LexicalProcess.RegisterKeyword("Effect", TokenValues.Effect);
                         __LexicalProcess.RegisterKeyword("power", TokenValues.power);
                         __LexicalProcess.RegisterKeyword("Faction", TokenValues.Faction);
                         __LexicalProcess.RegisterKeyword("CardTipe", TokenValues.CardTipe);
                         __LexicalProcess.RegisterKeyword("Rank", TokenValues.Rank);
-                        __LexicalProcess.RegisterKeyword("Range", TokenValues.Range);
+                        __LexicalProcess.RegisterKeyword("true", TokenValues.True);
+                        __LexicalProcess.RegisterKeyword("false", TokenValues.False);
+                        __LexicalProcess.RegisterKeyword("range", TokenValues.range);
+                        __LexicalProcess.RegisterKeyword("description", TokenValues.description);
+                        __LexicalProcess.RegisterKeyword("effect", TokenValues.effect);
+                        __LexicalProcess.RegisterKeyword("faction", TokenValues.faction);
+                        __LexicalProcess.RegisterKeyword("rank", TokenValues.rank);
+                        __LexicalProcess.RegisterKeyword("type", TokenValues.type);
+
                         __LexicalProcess.RegisterKeyword("description", TokenValues.description);
                     }
 
