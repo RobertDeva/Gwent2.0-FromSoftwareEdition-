@@ -10,6 +10,7 @@ namespace GwentEngine
             Text,
             Number,
             Bool,
+            Identifier,
             ErrorType
         }
     }

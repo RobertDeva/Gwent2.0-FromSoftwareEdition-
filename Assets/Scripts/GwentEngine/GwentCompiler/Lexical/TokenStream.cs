@@ -7,6 +7,7 @@ namespace GwentEngine
     {
         public class TokenStream : IEnumerable<Token>
         {
+            public int count { get => tokens.Count; }
             private List<Token> tokens;
             private int position;
             public int Position { get { return position; } }
@@ -55,7 +56,7 @@ namespace GwentEngine
                 return false;
             }
 
-            /* In this cas, the next position must match the given value */
+            /* In this case, the next position must match the given value */
             public bool Next(string value)
             {
                 if (position < tokens.Count - 1 && LookAhead(1).Value == value)

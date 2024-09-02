@@ -65,13 +65,16 @@ namespace GwentEngine
             public const string GreatherEqual = "GreatherEqual"; // >=
             public const string LessEqual = "LessEqual"; // <=
             public const string Assign = "Assign"; // =
-            public const string InnerSeparator = "InnerSeparetor";
+            public const string Implication = "Implication"; // =>
+            public const string InnerSeparator = "InnerSeparetor"; // .
+            public const string TwoPoints = "TwoPoints"; // :
             public const string ValueSeparator = "ValueSeparator"; // ,
             public const string StatementSeparator = "StatementSeparator"; // ;
 
             public const string OpenBracket = "OpenBracket"; // (
             public const string ClosedBracket = "ClosedBracket"; // )
-
+            public const string OpenBraces = "OpenBraces"; // [
+            public const string ClosedBraces = "ClosedBraces"; // ]
             public const string OpenCurlyBraces = "OpenCurlyBraces"; // {
             public const string ClosedCurlyBraces = "ClosedCurlyBraces"; // }
 
@@ -93,13 +96,19 @@ namespace GwentEngine
             public const string If = "if"; // keyword if
             public const string Else = "else"; // keyword else
             public const string In = "in"; // keyword in
-            public const string String = "string"; // keyword string
-            public const string Bool = "bool"; // keyword bool
-            public const string Int = "int"; // keyword int
+            public const string String = "String"; // keyword string
+            public const string Bool = "Bool"; // keyword bool
+            public const string Number = "Number"; // keyword int
             public const string True = "true"; // keyword true
             public const string False = "false"; // keyword false
+            public const string Params = "Params";
+            public const string Source = "Source";
+            public const string Selector = "Selector";
+            public const string Action = "Action";
             public const string context = "context";
-
+            public const string targets = "targets";
+            public const string target = "target";
+            public const string OnActivation = "OnActivation";
         }
     }
 }

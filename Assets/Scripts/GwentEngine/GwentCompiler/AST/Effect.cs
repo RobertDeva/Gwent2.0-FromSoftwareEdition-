@@ -7,7 +7,9 @@ namespace GwentEngine
     {
         public class Effect : ASTNode
         {
-            public string Id { get; set; }
+            public string Id { get; set; }           
+            public List<Param> ParamsExpresions;
+            public List<ASTNode> ActionList;
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
                 throw new System.NotImplementedException();

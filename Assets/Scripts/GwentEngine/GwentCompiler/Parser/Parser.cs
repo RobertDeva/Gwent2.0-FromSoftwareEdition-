@@ -7,12 +7,44 @@ namespace GwentEngine
     {
         public class Parser
         {
+            public static List<CompilingError> compilingErrors = new List<CompilingError>();
+            public static List<string> keywords = new List<string>() {TokenValues.power,TokenValues.Name,TokenValues.range,TokenValues.rank,TokenValues.type,TokenValues.context,TokenValues.targets};
             public Parser(TokenStream stream)
             {
                 Stream = stream;
             }
             public TokenStream Stream { get; private set; }
 
+            public ElementalProgram ParseProgram(List<CompilingError> errors)
+            {
+                ElementalProgram program = new ElementalProgram(new CodeLocation());
+
+                if (!Stream.CanLookAhead(0)) return program;
+
+                //Here we parse all the declared effects
+                while (Stream.LookAhead().Value == TokenValues.effect)
+                {
+                    Effect effect = ParseEffect(errors);
+                    program.Effects[effect.Id] = effect;
+                    if (!Stream.Next())
+                    {
+                        break;
+                    }
+                }
+                //Here we parse all the declared cards
+                /* while (Stream.LookAhead().Value == TokenValues.card)
+                 {
+                     Card card = ParseCard(errors);
+                     program.Cards[card.Id] = card;
+
+                     if (!Stream.Next())
+                     {
+                         break;
+                     }
+                 }
+                 */
+                return program;
+            }
             public Card ParseCard(List<CompilingError> errors)
             {
                 Card card = new Card("null", Stream.LookAhead().Location);
@@ -40,6 +72,10 @@ namespace GwentEngine
                 if (!Stream.Next(TokenType.Text))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Invalid assignament"));
+                }
+                if (!Stream.Next(TokenValues.StatementSeparator))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
                 }
                 if (!Stream.Next(TokenValues.power))
                 {
@@ -117,9 +153,9 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
                 }
-                if (!Stream.Next(TokenValues.OpenCurlyBraces))
+                if (!Stream.Next(TokenValues.OpenBraces))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "{ expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "[ expected"));
                 }
                 while (Stream.Next(TokenType.Identifier) || Stream.Next(TokenValues.ValueSeparator))
                 {
@@ -131,9 +167,9 @@ namespace GwentEngine
                         }
                    }
                 }
-                if (!Stream.Next(TokenValues.ClosedCurlyBraces))
+                if (!Stream.Next(TokenValues.ClosedBraces))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "] expected"));
                 }
                 if (!Stream.Next(TokenValues.StatementSeparator))
                 {
@@ -149,9 +185,380 @@ namespace GwentEngine
                 }
                 return card;
             }
+
+            private void ParseOnActivation(List<CompilingError> errors)
+            {
+                if (!Stream.Next(TokenValues.OnActivation))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OnActivation expected"));
+                }
+                if (!Stream.Next(TokenValues.OpenBraces))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "[ expected"));
+                }
+            }
             public Effect ParseEffect(List<CompilingError> errors)
             {
-                throw new NotImplementedException();
+                Effect effect = new Effect("null", Stream.LookAhead().Location);
+
+
+                if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.Name)) // Name
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Name Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.TwoPoints)) //:
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
+                }
+
+                if (!Stream.Next(TokenType.Text)) // Text
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Text Expected"));
+                }
+
+                effect.Id = Stream.LookAhead().Value; //Se añade el nombre al effecto
+
+                if (!Stream.Next(TokenValues.ValueSeparator)) // ,
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.Params)) // Params
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Params Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.TwoPoints)) // :
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.ClosedCurlyBraces)) //Si no hay una llave cerrada entra
+                {
+                    Stream.MoveNext(1); //Retrocede una posicion
+                    ParseParams(errors, effect);
+                } // }
+
+                if (!Stream.Next(TokenValues.ValueSeparator)) // ,
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.Action)) // Action
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Action Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.TwoPoints)) //:
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.OpenBracket)) //(
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenBracket Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.targets)) //targets
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "targets Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.ValueSeparator)) // ,
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "targets Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.context)) // context
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "context Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.ClosedBracket)) // )
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "context Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.Implication)) // =>
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "=> Expected"));
+                }
+
+                if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
+                }
+
+                if (Stream.LookAhead(1).Value != TokenValues.ClosedCurlyBraces) // Si no hay } parsea Action
+                {
+                    ParseAction(errors, effect.ActionList);
+                    //el cierre restante despues de parsear Action
+                    if (!Stream.Next(TokenValues.ClosedCurlyBraces))
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} Expected"));
+                    }
+                    return effect;
+                }
+                else
+                {
+                    Stream.MoveNext(1);
+                    if (!Stream.Next(TokenValues.ClosedCurlyBraces))
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} Expected"));
+                    }
+                }
+
+
+                /*Expression? exp = ParseExpression();   //Esto es para las expresiones
+                if (exp != null)
+                {
+                    Debug.Log(exp.ToString());
+                }
+                else Debug.Log("Es nulo");
+                if(exp == null)
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
+                }
+                effect.ActionList.Add(exp);*/
+                return effect;
+
+
+
+                //Falta terminar el metodo ParseAction
+
+
+
+            }
+            private bool ParseParametro(List<CompilingError> errors, Effect effect) //Parsea una variable, normalmente se llamada desde Params
+            {
+                string id;
+                TypeOfValue typeOfValue;
+
+                if (!Stream.Next(TokenType.Identifier))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Id expected"));
+                }
+                id = Stream.LookAhead().Value;
+
+                if (!Stream.Next(TokenValues.TwoPoints))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints expected"));
+                }
+
+
+                Stream.MoveNext(1);
+
+                if (Stream.LookAhead().Value == TokenValues.Bool) typeOfValue = TypeOfValue.Bool;
+                else if (Stream.LookAhead().Value == TokenValues.String) typeOfValue = TypeOfValue.String;
+                else if (Stream.LookAhead().Value == TokenValues.Number) typeOfValue = TypeOfValue.Number;
+                else
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Bool, Number or String expected"));
+                    Stream.MoveNext(1);
+                    return false;
+                }
+
+                Param parametro = new Param(id, typeOfValue);
+                effect.ParamsExpresions.Add(parametro);
+
+                return true;
+            }
+            private void ParseAction(List<CompilingError> errors, List<ASTNode> actionList) //Parsea el Action de Effect, parece ser que hay que darle de parametro un objeto especifico para que almacene expresiones de AST
+            {
+                while (Stream.Position < Stream.count) //Recorre mientras hallan instrucciones
+                {
+                    /* if (!Stream.Next()) 
+                     {
+                         Debug.Log("Se acaba");
+                         break;  //Si se acaba la lista de tokens, rompe el ciclo
+                     }*/
+
+                    if (Stream.End) break;
+
+                    if (Stream.Next(TokenValues.While)) //Parsea instrucciones while
+                    {
+                        ParseWhile(errors, actionList);
+                        if (!Stream.Next(TokenValues.StatementSeparator)) //Verificar ; despues de cada instruccion
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
+                        }
+                    }
+                    else if (Stream.Next(TokenValues.For)) //Parsea instrucciones for
+                    {
+                        ParseFor(errors, actionList);
+                        if (!Stream.Next(TokenValues.StatementSeparator)) //Verificar ; despues de cada instruccion
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
+                        }
+                    }
+                    else if (Stream.Next(TokenValues.ClosedCurlyBraces))   //Si se encuentra una } entonces se acaba el ciclo
+                    {
+                        break;
+                    }
+                    else // si no es un while o un for , entonces es una expresiom
+                    {
+                        Expression? exp = ParseExpression();
+
+                        if (exp == null)
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
+                        }
+
+                        actionList.Add(exp);
+
+                        if (!Stream.Next(TokenValues.StatementSeparator)) //Verificar ; despues de cada instruccion
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
+                        }
+                    }
+                }
+            }
+
+            private Expression ParseIndexer(List<CompilingError> errors, Expression? expression)
+            {
+                if (expression == null) return null;
+
+                if (Stream.LookAhead(1).Value == TokenValues.OpenBraces)
+                {
+                    Stream.MoveNext(1);
+
+                    Expression? exp = ParseExpression();
+                    if (exp == null)
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression in indexer"));
+                    }
+                    if (!Stream.Next(TokenValues.ClosedBraces))
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "] expected"));
+                    }
+                    Indexer indexador = new Indexer(Stream.LookAhead().Location);
+                    indexador.Left = expression;
+                    indexador.Right = exp;
+                    return indexador;
+                }
+                return expression;
+            }
+            private void ParseWhile(List<CompilingError> errors, List<ASTNode> actionList)
+            {
+                While While = new While(null, Stream.LookAhead().Location);
+
+                if (!Stream.Next(TokenValues.OpenBracket))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "( expected"));
+                }
+
+                Expression? exp = ParseExpression();
+                if (exp == null)
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
+                }
+                else While.Condition = exp;
+
+                if (!Stream.Next(TokenValues.ClosedBracket))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ") expected"));
+                }
+
+                if (Stream.LookAhead(1).Value == TokenValues.OpenCurlyBraces)
+                {
+                    Stream.MoveNext(1);
+
+                    ParseAction(errors, While.ActionList);
+                    Stream.MoveBack(1);
+
+                    if (!Stream.Next(TokenValues.ClosedCurlyBraces))
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} expected"));
+                    }
+
+                    actionList.Add(While);
+                    return;
+                }
+                else //Si es distinto, parsea una instruccion
+                {
+                    Expression? exp1 = ParseExpression();
+                    if (exp1 == null)
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
+                    }
+                    While.ActionList.Add(exp1);
+                    actionList.Add(While);
+                }
+            }
+
+            private void ParseFor(List<CompilingError> errors, List<ASTNode> actionList) //NO SE HA PUESTO LA DECLARACION DE UN SOLO ARGUMENTO
+            {
+                For @for = new For(Stream.LookAhead().Location);
+
+                if (!Stream.Next(TokenValues.target))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "target expected"));
+                }
+
+                if (!Stream.Next(TokenValues.In))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "in expected"));
+                }
+
+                if (!Stream.Next(TokenValues.targets))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "targets expected"));
+                }
+
+                if (Stream.LookAhead(1).Value == TokenValues.OpenCurlyBraces)
+                {
+                    Stream.MoveNext(1);
+
+                    ParseAction(errors, @for.ActionList);
+                    Stream.MoveBack(1);
+
+                    if (!Stream.Next(TokenValues.ClosedCurlyBraces))
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} expected"));
+                    }
+
+                    actionList.Add(@for);
+                    return;
+                }
+                else //Si es distinto, parsea una instruccion
+                {
+                    Expression? exp1 = ParseExpression();
+                    if (exp1 == null)
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
+                    }
+                    @for.ActionList.Add(exp1);
+                    actionList.Add(@for);
+                }
+            }
+            private void ParseParams(List<CompilingError> errors, Effect effect) //Parsea el interior de Params
+            {
+                Stream.MoveBack(1);
+                while (ParseParametro(errors, effect))
+                {
+                    if (!Stream.Next(TokenValues.ValueSeparator))
+                    {
+                        //Stream.MoveBack(0);
+                        if (!Stream.Next(TokenValues.ClosedCurlyBraces)) //aumentar
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} expected"));
+                            Stream.MoveNext(1);
+                        }
+
+                        break;
+                    }
+                }
             }
             public Rank ParseRank(List<CompilingError> errors)
             {
@@ -189,13 +596,63 @@ namespace GwentEngine
                 return ParseExpressionLv0(null);
             }
 
-            private Expression? ParseExpressionLv05(Expression? left)
+            
+
+            private Expression? ParseExpressionLv0(Expression? left)
+            {
+                Expression? newleft = ParseExpressionLv01(left);
+                Expression? exp = ParseExpressionLv0_(newleft);
+                return exp;
+            }
+
+            private Expression? ParseExpressionLv0_(Expression? left)
+            {
+                Expression? exp = ParseOr(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
+                exp = ParseAnd(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
+                return left;   
+            }
+
+            private Expression? ParseExpressionLv01(Expression? left)
+            {
+                Expression? newleft = ParseExpressionLv02(left);
+                return ParseExpressionLv01_(newleft);
+            }
+
+            private Expression? ParseExpressionLv01_(Expression? left)
+            {
+                Expression exp = ParseEqual(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
+                exp = ParseDiferent(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
+                exp = ParseAssign(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
+                return left;
+            }
+
+            private Expression? ParseExpressionLv02(Expression? left)
             {
                 Expression? newleft = ParseExpressionLv1(left);
-                return ParseExpressionLv05_(newleft);                
+                return ParseExpressionLv02_(newleft);
             }
-            
-            private Expression? ParseExpressionLv05_(Expression? left)
+
+            private Expression? ParseExpressionLv02_(Expression? left)
             {
                 Expression? exp = ParseGreather(left);
                 if (exp != null)
@@ -217,46 +674,8 @@ namespace GwentEngine
                 {
                     return exp;
                 }
-                exp = ParseGreatherEqual(left);
-                if (exp != null)
-                {
-                    return exp;
-                }
-                exp = ParseEqual(left);
-                if (exp != null)
-                {
-                    return exp;
-                }
-                exp = ParseDiferent(left);
-                if (exp != null)
-                {
-                    return exp;
-                }
                 return left;
             }
-
-            private Expression? ParseExpressionLv0(Expression? left)
-            {
-                Expression? newleft = ParseExpressionLv05(left);
-                Expression? exp = ParseExpressionLv0_(newleft);
-                return exp;
-            }
-
-            private Expression? ParseExpressionLv0_(Expression? left)
-            {
-                Expression? exp = ParseOr(left);
-                if (exp != null)
-                {
-                    return exp;
-                }
-                exp = ParseAnd(left);
-                if (exp != null)
-                {
-                    return exp;
-                }
-                return left;   
-            }
-
             private Expression? ParseExpressionLv1(Expression? left)
             {
                 Expression? newLeft = ParseExpressionLv2(left);
@@ -285,6 +704,11 @@ namespace GwentEngine
                 {
                     return exp;
                 }
+                exp = ParseDotNotation(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
                 return left;
             }
             
@@ -305,17 +729,23 @@ namespace GwentEngine
                 {
                     return exp;
                 }
+                exp = ParseResto(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
                 return left;
             }
 
             private Expression? ParseExpressionLv3(Expression? left)
             {
-                /*if(Stream.Next(TokenValues.OpenBracket) || Stream.Next(TokenValues.ClosedBracket))
+                
+                Expression? exp = ParseInBrackectExpression();
+                if (exp != null)
                 {
-                    Expression? bracket = ParseInBrackectExpression(left);
-                    return bracket;
-                }*/
-                Expression? exp = ParseNumber();
+                    return exp;
+                }
+                exp = ParseNumber();
                 if (exp != null)
                 {
                     return exp;
@@ -333,6 +763,7 @@ namespace GwentEngine
                 exp = ParseIdentifier();
                 if (exp != null)
                 {
+                    exp = ParseIndexer(compilingErrors, exp);
                     return exp;
                 }
                 return null;
@@ -355,7 +786,7 @@ namespace GwentEngine
                 }
                 great.Right = right;
 
-                return ParseExpressionLv05_(great);
+                return ParseExpressionLv02_(great);
             }
 
             private Expression? ParseLess(Expression? left)
@@ -367,7 +798,7 @@ namespace GwentEngine
 
                 less.Left = left;
 
-                Expression? right = ParseExpressionLv05(null);
+                Expression? right = ParseExpressionLv02(null);
                 if (right == null)
                 {
                     Stream.MoveBack(2);
@@ -395,7 +826,7 @@ namespace GwentEngine
                 }
                 greatEq.Right = right;
 
-                return ParseExpressionLv05_(greatEq);
+                return ParseExpressionLv02_(greatEq);
             }
 
             private Expression? ParseLessEqual(Expression? left)
@@ -415,7 +846,7 @@ namespace GwentEngine
                 }
                 lessEq.Right = right;
 
-                return ParseExpressionLv05_(lessEq);
+                return ParseExpressionLv02_(lessEq);
             }
 
             private Expression? ParseEqual(Expression? left)
@@ -427,7 +858,7 @@ namespace GwentEngine
 
                 eq.Left = left;
 
-                Expression? right = ParseExpressionLv1(null);
+                Expression? right = ParseExpressionLv02(null);
                 if (right == null)
                 {
                     Stream.MoveBack(2);
@@ -435,7 +866,7 @@ namespace GwentEngine
                 }
                 eq.Right = right;
 
-                return ParseExpressionLv05_(eq);
+                return ParseExpressionLv01_(eq);
             }
 
             private Expression? ParseDiferent(Expression? left)
@@ -447,7 +878,7 @@ namespace GwentEngine
 
                 eq.Left = left;
 
-                Expression? right = ParseExpressionLv1(null);
+                Expression? right = ParseExpressionLv02(null);
                 if (right == null)
                 {
                     Stream.MoveBack(2);
@@ -455,7 +886,7 @@ namespace GwentEngine
                 }
                 eq.Right = right;
 
-                return ParseExpressionLv05_(eq);
+                return ParseExpressionLv01_(eq);
             }
 
             private Expression? ParseOr(Expression? left)
@@ -467,7 +898,7 @@ namespace GwentEngine
 
                 eq.Left = left;
 
-                Expression? right = ParseExpressionLv05(null);
+                Expression? right = ParseExpressionLv02(null);
                 if (right == null)
                 {
                     Stream.MoveBack(2);
@@ -476,6 +907,24 @@ namespace GwentEngine
                 eq.Right = right;
 
                 return ParseExpressionLv0_(eq);
+            }
+            private Expression? ParseAssign(Expression? left)
+            {
+                Assign assign = new Assign(Stream.LookAhead().Location);
+                if (left == null || !Stream.Next(TokenValues.Assign))
+                {
+                    return null;
+                }
+                assign.Left = left;
+                Expression? right = ParseExpressionLv02(null);
+                if (right == null)
+                {
+                    Stream.MoveBack(2);
+                    return null;
+                }
+                assign.Right = right;
+
+                return ParseExpressionLv01_(assign);
             }
 
             private Expression? ParseAnd(Expression? left)
@@ -487,7 +936,7 @@ namespace GwentEngine
 
                 eq.Left = left;
 
-                Expression? right = ParseExpressionLv05(null);
+                Expression? right = ParseExpressionLv02(null);
                 if (right == null)
                 {
                     Stream.MoveBack(2);
@@ -576,6 +1025,25 @@ namespace GwentEngine
 
                 return ParseExpressionLv1_(concatws);
             }
+            private Expression? ParseDotNotation(Expression? left)
+            {
+                DotNotation dotNotation = new DotNotation(Stream.LookAhead().Location);
+
+                if (left == null || !Stream.Next(TokenValues.InnerSeparator))
+                    return null;
+
+                dotNotation.Left = left;
+
+                Expression? right = ParseExpressionLv2(null);
+                if (right == null)
+                {
+                    Stream.MoveBack(2);
+                    return null;
+                }
+                dotNotation.Right = right;
+
+                return ParseExpressionLv1_(dotNotation);
+            }
 
             private Expression? ParseMul(Expression? left)
             {
@@ -616,7 +1084,25 @@ namespace GwentEngine
 
                 return ParseExpressionLv2_(div);
             }
+            private Expression? ParseResto(Expression? left)
+            {
+                Resto resto = new Resto(Stream.LookAhead().Location);
 
+                if (left == null || !Stream.Next(TokenValues.Resto))
+                    return null;
+
+                resto.Left = left;
+
+                Expression? right = ParseExpressionLv3(null);
+                if (right == null)
+                {
+                    Stream.MoveBack(2);
+                    return null;
+                }
+                resto.Right = right;
+
+                return ParseExpressionLv2_(resto);
+            }
             private Expression? ParseNumber()
             {
                 if (!Stream.Next(TokenType.Number))
@@ -637,19 +1123,24 @@ namespace GwentEngine
                      return null;
                 return new Bool(Stream.LookAhead().Value, Stream.LookAhead().Location);
             }
-
             private Expression? ParseIdentifier()
             {
-                if (!Stream.Next(TokenType.Identifier) )
-                    return null;
+                if (!Stream.Next(TokenType.Identifier) || (!Stream.Next(TokenType.Keyword) && !keywords.Contains(Stream.LookAhead().Value))) return null;
                 return new Identifier(Stream.LookAhead().Value, Stream.LookAhead().Location);
             }
-            /*private Expression? ParseInBrackectExpression(Expression? left)
+            private Expression? ParseInBrackectExpression()
             {
-                if (Stream.Next(TokenValues.ClosedBracket))
+                InBracketExpression inBracket = new InBracketExpression(Stream.LookAhead().Location);
+                if(!Stream.Next(TokenValues.OpenBracket))
                     return null;
-                return ParseExpressionLv0(left);
-            }*/
+
+                inBracket.InnerExpression = ParseExpression();
+                if(inBracket.InnerExpression == null)
+                    return null;
+                if (!Stream.Next(TokenValues.ClosedBracket))
+                    compilingErrors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "( expected"));
+                return inBracket;
+            }
         }
     }
 }

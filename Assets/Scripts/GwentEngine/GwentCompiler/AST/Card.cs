@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -5,11 +6,12 @@ namespace GwentEngine
 {
     namespace GwentCompiler
     {
-        public class Card : ASTNode
+        public class Card : ASTNode , IPlayable
         {
             public string Id { get; set; }
             public string Name { get; set; }
             public Expression power { get; set; }
+            public Expression actualpower { get; set; }
             public Faction faction { get; set; }
             public CardType type { get; set; }
             public Rank rank { get; set; }
@@ -29,6 +31,11 @@ namespace GwentEngine
                 Location = location;
             }
 
+            public void Invoke()
+            {
+                throw new NotImplementedException();
+            }
+               
         }
 
     }

@@ -8,17 +8,19 @@ namespace GwentEngine
     {
         public class While : ASTNode
         {
-            public Expression expression { get; set; }
-            public List<Expression> expressions;
+            public Expression Condition;
+            public List<ASTNode> ActionList;
+
+            public While(Expression condition, CodeLocation location) : base(location)
+            {
+                ActionList = new List<ASTNode>();
+            }
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
                 throw new System.NotImplementedException();
             }
-            public While(CodeLocation location) : base(location)
-            {
-
-            }
+           
         }
 
     }

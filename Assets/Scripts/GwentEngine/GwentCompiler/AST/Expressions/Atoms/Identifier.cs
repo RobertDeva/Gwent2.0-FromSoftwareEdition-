@@ -8,13 +8,12 @@ namespace GwentEngine
     {
         public class Identifier : AtomExpression
         {
-           
 
             public override ExpressionType Type
             {
                 get
                 {
-                    return ExpressionType.Anytype;
+                    return ExpressionType.Identifier;
                 }
                 set { }
             }

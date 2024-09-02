@@ -17,7 +17,7 @@ namespace GwentEngine
             {
                 Right.Evaluate();
                 Left.Evaluate();
-
+ 
                 Value = (double)Left.Value / (double)Right.Value;
             }
 

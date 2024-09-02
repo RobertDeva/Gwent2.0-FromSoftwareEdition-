@@ -214,11 +214,11 @@ namespace GwentEngine
                     if (number.Length == 0)
                         return false;
 
-                    // Load Number posfix, i.e., 34.0F
+                   /* // Load Number posfix, i.e., 34.0F
                     // Not supported exponential formats: 1.3E+4
                     while (!EOL && char.IsLetterOrDigit(Peek()))
                         number += ReadAny();
-
+                   */
                     return number.Length > 0;
                 }
 
