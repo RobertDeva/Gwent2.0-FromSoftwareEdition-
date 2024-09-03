@@ -89,7 +89,7 @@ namespace GwentEngine
             public const string rank = "rank"; // rank
             public const string effect = "effect"; //effect
             public const string description = "description"; // description
-            public const string Name = "Name"; // Name
+            public const string name = "name"; // Name
             public const string range = "range"; // positions
             public const string For = "for"; // cicle for
             public const string While = "while"; // cicle while

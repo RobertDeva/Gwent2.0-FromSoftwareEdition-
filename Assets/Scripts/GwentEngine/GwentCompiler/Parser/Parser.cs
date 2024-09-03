@@ -8,7 +8,7 @@ namespace GwentEngine
         public class Parser
         {
             public static List<CompilingError> compilingErrors = new List<CompilingError>();
-            public static List<string> keywords = new List<string>() {TokenValues.power,TokenValues.Name,TokenValues.range,TokenValues.rank,TokenValues.type,TokenValues.context,TokenValues.targets};
+            public static List<string> keywords = new List<string>() {TokenValues.power,TokenValues.name,TokenValues.range,TokenValues.rank,TokenValues.type,TokenValues.context,TokenValues.targets};
             public Parser(TokenStream stream)
             {
                 Stream = stream;
@@ -61,13 +61,13 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "{ expected"));
                 }
-                if (!Stream.Next(TokenValues.Name))
+                if (!Stream.Next(TokenValues.name))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Name expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "name expected"));
                 }
-                if (!Stream.Next(TokenValues.Assign))
+                if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
                 if (!Stream.Next(TokenType.Text))
                 {
@@ -81,9 +81,9 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "power expected"));
                 }
-                if (!Stream.Next(TokenValues.Assign))
+                if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
 
                 /* Here we parse the expression. If null is returned, we send an error */
@@ -104,9 +104,9 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "faction expected"));
                 }
-                if (!Stream.Next(TokenValues.Assign))
+                if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
                 Faction fac = ParseFaction(errors);
                 if (fac == null)
@@ -119,9 +119,9 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "type expected"));
                 }
-                if (!Stream.Next(TokenValues.Assign))
+                if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
                 CardType typ = ParseCardType(errors);
                 if (typ == null)
@@ -134,9 +134,9 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "rank expected"));
                 }
-                if (!Stream.Next(TokenValues.Assign))
+                if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
                 Rank rank = ParseRank(errors);
                 if (rank == null)
@@ -149,21 +149,21 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "range expected"));
                 }
-                if (!Stream.Next(TokenValues.Assign))
+                if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "= expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
                 if (!Stream.Next(TokenValues.OpenBraces))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "[ expected"));
                 }
-                while (Stream.Next(TokenType.Identifier) || Stream.Next(TokenValues.ValueSeparator))
+                while (Stream.Next(TokenType.Text) || Stream.Next(TokenValues.ValueSeparator))
                 {
                    if(Stream.Next(TokenValues.ValueSeparator))
                    {
-                        if (!Stream.Next(TokenType.Identifier))
+                        if (!Stream.Next(TokenType.Text))
                         {
-                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "id expected"));
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "text expected"));
                         }
                    }
                 }
@@ -207,9 +207,9 @@ namespace GwentEngine
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
                 }
 
-                if (!Stream.Next(TokenValues.Name)) // Name
+                if (!Stream.Next(TokenValues.name)) // Name
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Name Expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "name Expected"));
                 }
 
                 if (!Stream.Next(TokenValues.TwoPoints)) //:

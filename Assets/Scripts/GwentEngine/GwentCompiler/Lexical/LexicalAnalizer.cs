@@ -57,7 +57,7 @@ namespace GwentEngine
                         __LexicalProcess.RegisterText("\"", "\"");
 
                         __LexicalProcess.RegisterKeyword("Card", TokenValues.Card);
-                        __LexicalProcess.RegisterKeyword("Name", TokenValues.Name);
+                        __LexicalProcess.RegisterKeyword("name", TokenValues.name);
                         __LexicalProcess.RegisterKeyword("Effect", TokenValues.Effect);
                         __LexicalProcess.RegisterKeyword("power", TokenValues.power);
                         __LexicalProcess.RegisterKeyword("Faction", TokenValues.Faction);

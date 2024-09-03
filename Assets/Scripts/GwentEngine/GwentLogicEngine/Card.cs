@@ -6,53 +6,114 @@ namespace GwentEngine
 {
     public abstract class Card : IPlayable
     {
-        public string Name { get; protected set; }
-        public int? power { get; protected set; }
-        public int? actualPower { get; set; }
-        public Faction faction { get; protected set; }
-        public CardType type { get; protected set; }
-        public Rank rank { get; protected set; }
-        public List<Position> range { get; protected set; }
+        public Player Owner { get; set; }
+        public bool InField { get => inField; set => inField = value; }
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+        public double Power
+        {
+            get
+            {
+                return (double)actualPower;
+            }
+            set
+            {
+                actualPower = value;
+            }
+        }
+        public string Faction
+        {
+            get
+            {
+                return faction.ToString();
+            }
+        }
+        public string Type
+        {
+            get
+            {
+                return type.ToString();
+            }
+        }
+        public string Rank
+        {
+            get
+            {
+                return rank.ToString();
+            }
+        }
+        public List<string> Range
+        {
+            get
+            {
+                List<string> ranges = new List<string>();
+                foreach (var item in range)
+                    ranges.Add(item.ToString());
+                return ranges;
+            }
+        }
+        public bool inField;
+        public string name;
+        protected double? power;
+        public double? actualPower;
+        public Faction faction;
+        public CardType type;
+        public Rank rank;
+        public List<Position> range;
         //public Effect;
-        public string description { get; protected set; }
+        protected string description;
 
-        public abstract void Invoke();
+        public abstract void Invoke(FieldZone zone);
+        public abstract void ResetState();
     }
 
     public class UnitCard : Card
     {
         public UnitCard(string name, int power, Faction faction, List<Position> range, Rank rank , string desc)
         {
-            Name = name;
+            inField = false;
+            this.name = name;
             this.power = power;
             actualPower = power;
             this.faction = faction;
             type = CardType.Unit;
             this.range = range;
-            if(rank == Rank.Special)
+            if(rank == GwentEngine.Rank.Special)
             {
-                this.rank = Rank.Silver;
+                this.rank = GwentEngine.Rank.Silver;
             }
             this.rank = rank;
             description = desc;
         }
 
-        public override void Invoke()
+        public override void Invoke(FieldZone zone)
         {
 
+        }
+        public override void ResetState()
+        {
+            actualPower = power;
         }
     }
 
     public class Lure : UnitCard
     {
-        public Lure(string name, Faction faction, string desc) : base(name, 0, faction ,new List<Position>() {Position.Melee, Position.Range, Position.Siege}, Rank.Silver,desc)
+        public Lure(string name, Faction faction, string desc) : base(name, 0, faction ,new List<Position>() {Position.Melee, Position.Range, Position.Siege}, GwentEngine.Rank.Special,desc)
         {
-           
+            rank = GwentEngine.Rank.Special;  
         }
 
-        public override void Invoke()
+        public override void Invoke(FieldZone zone)
         {
             throw new NotImplementedException();
+        }
+        public override void ResetState()
+        {
         }
     }
     public abstract class SpecialCard : Card
@@ -64,19 +125,23 @@ namespace GwentEngine
     {
         public UpgradeCard(string name, Faction faction, string desc)
         {
-            Name = name;
+            inField = false;
+            this.name = name;
             power = null;
             actualPower = power;
             this.faction = faction;
             type = CardType.Upgrade;
-            rank = Rank.Special;
+            rank = GwentEngine.Rank.Special;
             range = new List<Position>();
             description = desc;
         }
 
-        public override void Invoke()
+        public override void Invoke(FieldZone zone)
         {
             throw new NotImplementedException();
+        }
+        public override void ResetState()
+        {
         }
     }
 
@@ -84,19 +149,23 @@ namespace GwentEngine
     {
         public WeatherCard(string name, Faction faction, string desc)
         {
-            Name = name;
+            inField = false;
+            this.name = name;
             power = null;
             actualPower = power;
             this.faction = faction;
             type = CardType.Weather;
-            rank = Rank.Special;
+            rank = GwentEngine.Rank.Special;
             range = new List<Position>();
             description = desc;
         }
 
-        public override void Invoke()
+        public override void Invoke(FieldZone zone)
         {
             throw new NotImplementedException();
+        }
+        public override void ResetState()
+        {
         }
     }
 
@@ -104,21 +173,25 @@ namespace GwentEngine
     {
         public LeaderCard(string name, Faction faction, string desc)
         {
-            Name = name;
+            this.name = name;
             power = null;
             actualPower = power;
             this.faction = faction;
             type = CardType.Leader;
-            rank = Rank.Special;
+            rank = GwentEngine.Rank.Special;
             range = new List<Position>();
             description = desc;
         }
 
-        public override void Invoke()
+        public override void Invoke(FieldZone zone)
         {
             throw new NotImplementedException();
         }
+        public override void ResetState()
+        {
+        }
     }
+    
 
     public enum Faction
     {
