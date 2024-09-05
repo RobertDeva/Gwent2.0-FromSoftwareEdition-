@@ -175,10 +175,8 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ";  expected"));
                 }
-
-                //OnActivation aqui
-
-                //
+                ParseOnActivation(errors);
+                
                 if(!Stream.Next(TokenValues.ClosedCurlyBraces))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} expected"));
@@ -196,9 +194,21 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "[ expected"));
                 }
+                while (!Stream.Next(TokenValues.ClosedBraces) || Stream.Position >= Stream.count)
+                {
+                    if (Stream.Next(TokenValues.OpenCurlyBraces))
+                    {
+                        ParseEffects(errors);
+                    }
+                }
+            }
+            private void ParseEffects(List<CompilingError> errors)
+            {
+
             }
             public Effect ParseEffect(List<CompilingError> errors)
             {
+
                 Effect effect = new Effect("null", Stream.LookAhead().Location);
 
 
@@ -229,30 +239,29 @@ namespace GwentEngine
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
                 }
 
-                if (!Stream.Next(TokenValues.Params)) // Params
+                if (Stream.LookAhead(1).Value == TokenValues.Params) // Params
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Params Expected"));
-                }
+                    Stream.MoveNext(1);
 
-                if (!Stream.Next(TokenValues.TwoPoints)) // :
-                {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
-                }
+                    if (!Stream.Next(TokenValues.TwoPoints)) // :
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
+                    }
 
-                if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
-                {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
-                }
+                    if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
+                    }
 
-                if (!Stream.Next(TokenValues.ClosedCurlyBraces)) //Si no hay una llave cerrada entra
-                {
-                    Stream.MoveNext(1); //Retrocede una posicion
-                    ParseParams(errors, effect);
-                } // }
+                    if (!Stream.Next(TokenValues.ClosedCurlyBraces)) //Si no hay una llave cerrada entra
+                    {
+                        ParseParams(errors, effect);
+                    } // }
 
-                if (!Stream.Next(TokenValues.ValueSeparator)) // ,
-                {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
+                    if (!Stream.Next(TokenValues.ValueSeparator)) // ,
+                    {
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
+                    }
                 }
 
                 if (!Stream.Next(TokenValues.Action)) // Action
@@ -264,7 +273,6 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.OpenBracket)) //(
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenBracket Expected"));
@@ -319,26 +327,7 @@ namespace GwentEngine
                     }
                 }
 
-
-                /*Expression? exp = ParseExpression();   //Esto es para las expresiones
-                if (exp != null)
-                {
-                    Debug.Log(exp.ToString());
-                }
-                else Debug.Log("Es nulo");
-                if(exp == null)
-                {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
-                }
-                effect.ActionList.Add(exp);*/
                 return effect;
-
-
-
-                //Falta terminar el metodo ParseAction
-
-
-
             }
             private bool ParseParametro(List<CompilingError> errors, Effect effect) //Parsea una variable, normalmente se llamada desde Params
             {
@@ -376,16 +365,8 @@ namespace GwentEngine
             }
             private void ParseAction(List<CompilingError> errors, List<ASTNode> actionList) //Parsea el Action de Effect, parece ser que hay que darle de parametro un objeto especifico para que almacene expresiones de AST
             {
-                while (Stream.Position < Stream.count) //Recorre mientras hallan instrucciones
+                while (Stream.Position < Stream.count || Stream.Next(TokenValues.ClosedCurlyBraces)) //Recorre mientras hallan instrucciones
                 {
-                    /* if (!Stream.Next()) 
-                     {
-                         Debug.Log("Se acaba");
-                         break;  //Si se acaba la lista de tokens, rompe el ciclo
-                     }*/
-
-                    if (Stream.End) break;
-
                     if (Stream.Next(TokenValues.While)) //Parsea instrucciones while
                     {
                         ParseWhile(errors, actionList);
@@ -402,20 +383,18 @@ namespace GwentEngine
                             errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
                         }
                     }
-                    else if (Stream.Next(TokenValues.ClosedCurlyBraces))   //Si se encuentra una } entonces se acaba el ciclo
-                    {
-                        break;
-                    }
                     else // si no es un while o un for , entonces es una expresiom
                     {
                         Expression? exp = ParseExpression();
 
                         if (exp == null)
                         {
+                            Stream.MoveNext(1);
                             errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
                         }
+                        else actionList.Add(exp);
 
-                        actionList.Add(exp);
+
 
                         if (!Stream.Next(TokenValues.StatementSeparator)) //Verificar ; despues de cada instruccion
                         {

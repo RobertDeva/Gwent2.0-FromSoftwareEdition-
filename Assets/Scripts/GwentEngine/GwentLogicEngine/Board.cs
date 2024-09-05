@@ -25,7 +25,18 @@ namespace GwentEngine
         
         public Board()
         {
-
+            player1.GetBoard = this;
+            player2.GetBoard = this;
+            player1.Melee = Melee1;
+            player2.Melee = Melee2;
+            player1.UpgradeMelee = UpgradeMelee1;
+            player2.UpgradeMelee = UpgradeMelee2;
+            player1.Range = Range1;
+            player2.Range = Range2;
+            player1.UpgradeRange = UpgradeRange1;
+            player2.UpgradeRange = UpgradeRange2;
+            player1.Siege = Siege1;
+            player2.Siege = Siege2;
         }
     }
     

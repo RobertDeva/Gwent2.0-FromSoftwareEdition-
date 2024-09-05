@@ -7,6 +7,7 @@ namespace GwentEngine
     public abstract class Card : IPlayable
     {
         public Player Owner { get; set; }
+        public List<IPlayable> Origin { get; set; }
         public bool InField { get => inField; set => inField = value; }
         public string Name
         {
@@ -65,7 +66,7 @@ namespace GwentEngine
         public CardType type;
         public Rank rank;
         public List<Position> range;
-        //public Effect;
+        public EffectType effect;
         protected string description;
 
         public abstract void Invoke(FieldZone zone);
@@ -217,5 +218,20 @@ namespace GwentEngine
         Gold,
         Silver,
         Special,
+    }
+
+    public enum EffectType
+    {
+        None,
+        Buff,
+        Wheater,
+        InvokeGreatherDeath,
+        InvokeDeath,
+        Draw,
+        Companion,
+        Destruction,
+        Average,
+        Señuelo,
+        Despeje        
     }
 }

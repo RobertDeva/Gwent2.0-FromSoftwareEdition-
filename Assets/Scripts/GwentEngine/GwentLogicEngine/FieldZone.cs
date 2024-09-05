@@ -8,7 +8,6 @@ namespace GwentEngine
     public abstract class FieldZone
     {
         public List<IPlayable> InvoqueZone { get; set; }
-        public int Limit { get; protected set; }
     }
 
     public class UnitZone : FieldZone
@@ -19,17 +18,16 @@ namespace GwentEngine
 
         public UnitZone(Position range)
         {
-            FieldRange = range;
-            Limit = 5;
+            FieldRange = range;            
         }
 
     }
 
     public class WeatherZone : FieldZone
     {
-        public UnitZone UnitZone1 { get; set; }
-        public UnitZone UnitZone2 { get; set; }
-
+        public UnitZone UnitZone1 { get; }
+        public UnitZone UnitZone2 { get; }
+        public int Limit { get; }
 
         public WeatherZone(UnitZone unitZone1, UnitZone unitZone2)
         {
@@ -43,7 +41,8 @@ namespace GwentEngine
 
     public class UpgradeZone : FieldZone
     {
-        public UnitZone UnitZone { get; set; }
+        public UnitZone UnitZone { get; }
+        public int Limit { get; }
 
         public UpgradeZone(UnitZone unitZone)
         {

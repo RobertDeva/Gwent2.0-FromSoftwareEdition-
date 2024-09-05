@@ -15,10 +15,13 @@ namespace GwentEngine
         public List<IPlayable> Deck { get; set; }
         public UnitZone Melee { get; set; }
         public UpgradeZone UpgradeMelee { get; set; }
+        public WeatherZone MeleeWeather { get; set; }
         public UnitZone Range { get; set; }
         public UpgradeZone UpgradeRange { get; set; }
+        public WeatherZone RangeWeather { get; set; }
         public UnitZone Siege { get; set; }
         public UpgradeZone UpgradeSiege { get; set; }
+        public WeatherZone SiegeWeather { get; set; }
 
         public Player(string id, Deck mazo)
         {
@@ -32,6 +35,7 @@ namespace GwentEngine
             { 
                 card.Owner = this;
                 Deck.Add(card);
+                card.Origin = Deck;
             }
         }
     }

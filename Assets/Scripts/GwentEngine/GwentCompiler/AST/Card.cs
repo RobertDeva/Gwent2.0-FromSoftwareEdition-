@@ -9,6 +9,7 @@ namespace GwentEngine
         public class Card : ASTNode, IPlayable
         {
             public Player Owner { get; set; }
+            public List<IPlayable> Origin { get; set; }
             public bool InField { get => inField; set => inField = value; }
             public string Name
             {

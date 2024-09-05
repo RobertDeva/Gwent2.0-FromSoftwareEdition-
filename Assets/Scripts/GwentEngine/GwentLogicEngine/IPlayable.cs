@@ -8,6 +8,7 @@ namespace GwentEngine
     {
         public Player Owner { get; set; }
         public bool InField { get; set; }
+        public List<IPlayable> Origin { get; set; }
         public string Name { get; }
         public abstract double Power { get; set; }
         public abstract string Faction { get; }
