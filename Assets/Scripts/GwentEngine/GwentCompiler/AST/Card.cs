@@ -11,6 +11,8 @@ namespace GwentEngine
             public Player Owner { get; set; }
             public List<IPlayable> Origin { get; set; }
             public bool InField { get => inField; set => inField = value; }
+            public bool AffectedByWeather { get; set; }
+            public bool AffectedByBuff { get; set; }
             public string Name
             {
                 get
@@ -84,7 +86,8 @@ namespace GwentEngine
 
             public void Invoke(FieldZone? zone)
             {
-                throw new NotImplementedException();
+                MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
+                Origin = zone.InvoqueZone;
             }
             public void ResetState()
             {

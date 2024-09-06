@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
-using GwentEngine;
+using UnityEngine;
 
 namespace GwentEngine
 {
     public class Player
     { 
         public Board GetBoard { get; set; }
+        public Player Oponent { get; set; }
         public string Id { get; set; }
         public Deck Mazo { get; set; }
         public LeaderCard Leader { get; set; }
@@ -36,6 +37,18 @@ namespace GwentEngine
                 card.Owner = this;
                 Deck.Add(card);
                 card.Origin = Deck;
+            }
+        }
+
+        public void Draw()
+        {
+            if(Hand.Count < 10 && Deck.Count > 0)
+            {
+                MetodosUtiles.MoveList(Deck[Deck.Count - 1],Deck,Hand);
+            }
+            else if(Hand.Count > 10 && Deck.Count > 0)
+            {
+                MetodosUtiles.MoveList(Deck[Deck.Count - 1],Deck,Graveyard);
             }
         }
     }

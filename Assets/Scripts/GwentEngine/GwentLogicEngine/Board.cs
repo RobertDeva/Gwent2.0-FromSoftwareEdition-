@@ -25,6 +25,15 @@ namespace GwentEngine
         
         public Board()
         {
+           
+        }
+      
+        public void SetPlayers(Player player1, Player player2)
+        {
+            this.player1 = player1;
+            this.player2 = player2;
+            player1.Oponent = player2;
+            player2.Oponent = player1;
             player1.GetBoard = this;
             player2.GetBoard = this;
             player1.Melee = Melee1;
@@ -39,5 +48,4 @@ namespace GwentEngine
             player2.Siege = Siege2;
         }
     }
-    
 }

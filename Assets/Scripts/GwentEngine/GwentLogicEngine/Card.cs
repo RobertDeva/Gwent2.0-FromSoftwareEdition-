@@ -1,6 +1,7 @@
 using System; 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GwentEngine
 {
@@ -9,6 +10,8 @@ namespace GwentEngine
         public Player Owner { get; set; }
         public List<IPlayable> Origin { get; set; }
         public bool InField { get => inField; set => inField = value; }
+        public bool AffectedByWeather { get; set; }
+        public bool AffectedByBuff { get; set; }
         public string Name
         {
             get
@@ -75,7 +78,7 @@ namespace GwentEngine
 
     public class UnitCard : Card
     {
-        public UnitCard(string name, int power, Faction faction, List<Position> range, Rank rank , string desc)
+        public UnitCard(string name, int power, Faction faction, List<Position> range, Rank rank ,EffectType effect, string desc)
         {
             inField = false;
             this.name = name;
@@ -89,12 +92,18 @@ namespace GwentEngine
                 this.rank = GwentEngine.Rank.Silver;
             }
             this.rank = rank;
+            if(effect == EffectType.Buff || effect == EffectType.Weather || effect == EffectType.Despeje)
+                this.effect = EffectType.None;
+            this.effect = effect;
             description = desc;
+            AffectedByBuff = false;
+            AffectedByWeather = false;
         }
 
         public override void Invoke(FieldZone zone)
         {
-
+            MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
+            Origin = zone.InvoqueZone;
         }
         public override void ResetState()
         {
@@ -104,14 +113,15 @@ namespace GwentEngine
 
     public class Lure : UnitCard
     {
-        public Lure(string name, Faction faction, string desc) : base(name, 0, faction ,new List<Position>() {Position.Melee, Position.Range, Position.Siege}, GwentEngine.Rank.Special,desc)
+        public Lure(string name, Faction faction, string desc) : base(name, 0, faction ,new List<Position>() {Position.Melee, Position.Range, Position.Siege}, GwentEngine.Rank.Special,EffectType.Señuelo,desc)
         {
             rank = GwentEngine.Rank.Special;  
         }
 
         public override void Invoke(FieldZone zone)
         {
-            throw new NotImplementedException();
+            MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
+            Origin = zone.InvoqueZone;
         }
         public override void ResetState()
         {
@@ -134,12 +144,16 @@ namespace GwentEngine
             type = CardType.Upgrade;
             rank = GwentEngine.Rank.Special;
             range = new List<Position>();
+            effect = EffectType.Buff;
             description = desc;
+            AffectedByBuff = false;
+            AffectedByWeather = false;
         }
 
         public override void Invoke(FieldZone zone)
         {
-            throw new NotImplementedException();
+            MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
+            Origin = zone.InvoqueZone;
         }
         public override void ResetState()
         {
@@ -158,18 +172,37 @@ namespace GwentEngine
             type = CardType.Weather;
             rank = GwentEngine.Rank.Special;
             range = new List<Position>();
+            effect = EffectType.Weather;
             description = desc;
         }
 
         public override void Invoke(FieldZone zone)
         {
-            throw new NotImplementedException();
+            MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
+            Origin = zone.InvoqueZone;
         }
         public override void ResetState()
         {
         }
     }
-
+    public class Despeje : WeatherCard
+    {
+        public Despeje(string name, Faction faction, string desc) : base(name,faction,desc)
+        {
+            inField = false;
+            this.name = name;
+            power = null;
+            actualPower = power;
+            this.faction = faction;
+            type = CardType.Weather;
+            rank = GwentEngine.Rank.Special;
+            range = new List<Position>();
+            effect = EffectType.Despeje;
+            description = desc;
+            AffectedByBuff = false;
+            AffectedByWeather = false;
+        }
+    }
     public class LeaderCard : SpecialCard
     {
         public LeaderCard(string name, Faction faction, string desc)
@@ -186,7 +219,7 @@ namespace GwentEngine
 
         public override void Invoke(FieldZone zone)
         {
-            throw new NotImplementedException();
+            
         }
         public override void ResetState()
         {
@@ -224,7 +257,7 @@ namespace GwentEngine
     {
         None,
         Buff,
-        Wheater,
+        Weather,
         InvokeGreatherDeath,
         InvokeDeath,
         Draw,
