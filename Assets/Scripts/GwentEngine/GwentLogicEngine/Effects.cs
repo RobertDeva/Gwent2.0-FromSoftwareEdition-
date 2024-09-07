@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using System;
 
 namespace GwentEngine
@@ -81,7 +82,7 @@ namespace GwentEngine
         }
         public static void Draw(Card Card)
         {
-            Card.Owner.Draw();
+            Card.Owner.Draw(out IPlayable card);            
         }
         public static void Companion(Card Card)
         {

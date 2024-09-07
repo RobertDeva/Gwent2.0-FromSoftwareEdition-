@@ -40,16 +40,25 @@ namespace GwentEngine
             }
         }
 
-        public void Draw()
+        public void Draw(out IPlayable card)
         {
-            if(Hand.Count < 10 && Deck.Count > 0)
+            if (Hand.Count < 10 && Deck.Count > 0)
             {
-                MetodosUtiles.MoveList(Deck[Deck.Count - 1],Deck,Hand);
+                MetodosUtiles.MoveList(Deck[Deck.Count - 1], Deck, Hand);
+                card = Hand[Hand.Count - 1];
+                card.Origin = card.Owner.Hand;
             }
-            else if(Hand.Count > 10 && Deck.Count > 0)
+            else if (Hand.Count > 10 && Deck.Count > 0)
             {
-                MetodosUtiles.MoveList(Deck[Deck.Count - 1],Deck,Graveyard);
+                MetodosUtiles.MoveList(Deck[Deck.Count - 1], Deck, Graveyard);
+                card = Graveyard[Graveyard.Count - 1];
+                card.Origin = card.Owner.Graveyard;
             }
+            else
+            {
+                card = null;
+            }
+            
         }
     }
 

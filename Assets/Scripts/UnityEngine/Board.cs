@@ -27,8 +27,13 @@ public class GameBoard : MonoBehaviour
     public GameObject MeleeWeather;
     public GameObject RangeWeather;
     public GameObject SiegeWeather;
-    
-    public Board Board = new ();
+
+    public GameObject Card;
+    public GameObject GoldCard;
+    public GameObject SilverCard;
+    public GameObject LureCard;
+
+    public Board Board = new();
     public static Dictionary<List<IPlayable>, GameObject> TransformsZones = new();
 
     public void Start()
@@ -52,6 +57,7 @@ public class GameBoard : MonoBehaviour
 
     public void StartGame()
     {
+        Board.SetPlayers(Player1.player, Player2.player);
         TransformsZones[Board.player1.Hand] = Hand1;
         TransformsZones[Board.player2.Hand] = Hand2;
         TransformsZones[Board.player1.Graveyard] = Graveyard1;
@@ -59,8 +65,60 @@ public class GameBoard : MonoBehaviour
 
         for (int i = 0; i < 10; i++)
         {
-            Board.player1.Draw();
-            Board.player2.Draw();
+            Player1.Draw();
+            Player2.Draw();
+        }
+    }
+    public void Update()
+    {
+        if (Hand1.transform.childCount < Player1.player.Hand.Count || Hand2.transform.childCount < Player2.player.Hand.Count)
+        {
+            if (Hand1.transform.childCount < Player1.player.Hand.Count)
+            {
+                if (Player1.player.Hand[Player1.player.Hand.Count - 1].Rank == GwentEngine.Rank.Silver.ToString())
+                {
+                    Instantiate(SilverCard, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+
+                }
+                else if (Player1.player.Hand[Player1.player.Hand.Count - 1].Rank == GwentEngine.Rank.Gold.ToString())
+                {
+                    Instantiate(GoldCard, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+                }
+                else
+                {
+                    if (Player1.player.Hand[Player1.player.Hand.Count - 1].Type == GwentEngine.CardType.Unit.ToString())
+                    {
+                        Instantiate(LureCard, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+                    }
+                    else
+                    {
+                        Instantiate(Card, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+                    }
+                }
+            }
+            if (Hand2.transform.childCount < Player2.player.Hand.Count)
+            {
+                if (Player2.player.Hand[Player2.player.Hand.Count - 1].Rank == GwentEngine.Rank.Silver.ToString())
+                {
+                    Instantiate(SilverCard, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+
+                }
+                else if (Player2.player.Hand[Player2.player.Hand.Count - 1].Rank == GwentEngine.Rank.Gold.ToString())
+                {
+                    Instantiate(GoldCard, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                }
+                else
+                {
+                    if (Player2.player.Hand[Player1.player.Hand.Count - 1].Type == GwentEngine.CardType.Unit.ToString())
+                    {
+                        Instantiate(LureCard, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                    }
+                    else
+                    {
+                        Instantiate(Card, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                    }
+                }
+            }
         }
     }
 }
