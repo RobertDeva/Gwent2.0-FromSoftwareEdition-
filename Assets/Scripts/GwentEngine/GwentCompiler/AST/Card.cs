@@ -59,6 +59,7 @@ namespace GwentEngine
                     return range;
                 }
             }
+            public string Description { get => description; }
             public bool inField;
             public string Id { get; set; }
             public string name;

@@ -28,24 +28,23 @@ public class GwentPlayer : MonoBehaviour
         playable = card;
         if (playable != null)
         {
-            if (player.Hand[player.Hand.Count - 1].Rank == Rank.Silver.ToString())
+            if (playable.Rank == Rank.Silver.ToString())
             {
-                Instantiate(SilverCard, GameBoard.TransformsZones[playable.Origin].transform, false);
-
+                MetodosUtilesDeInstanciar.InstanciarCarta(SilverCard,playable,this);
             }
-            else if (player.Hand[player.Hand.Count - 1].Rank == Rank.Gold.ToString())
+            else if (playable.Rank == Rank.Gold.ToString())
             {
-                Instantiate(GoldCard, GameBoard.TransformsZones[playable.Origin].transform, false);
+                MetodosUtilesDeInstanciar.InstanciarCarta(GoldCard, playable, this);
             }
             else
             {
-                if (player.Hand[player.Hand.Count - 1].Type == CardType.Unit.ToString())
+                if (playable.Type == CardType.Unit.ToString())
                 {
-                    Instantiate(LureCard, GameBoard.TransformsZones[playable.Origin].transform, false);
+                    MetodosUtilesDeInstanciar.InstanciarSeñuelo(LureCard,playable,this);
                 }
                 else
                 {
-                    Instantiate(Card, GameBoard.TransformsZones[playable.Origin].transform, false);
+                    MetodosUtilesDeInstanciar.InstanciarCarta(Card, playable, this);
                 }
             }
         }

@@ -21,8 +21,10 @@ namespace GwentEngine
                 if(AffectedCard.InField && AffectedCard.Rank == "Silver")
                 {
                     MetodosUtiles.MoveList(TriggerCard, TriggerCard.Origin, AffectedCard.Origin);
+                    TriggerCard.Origin = AffectedCard.Origin;
                     TriggerCard.InField = true;
                     MetodosUtiles.MoveList(AffectedCard, AffectedCard.Origin, AffectedCard.Owner.Hand);
+                    AffectedCard.Origin = AffectedCard.Owner.Hand;
                     AffectedCard.InField = false;
                 }
             }

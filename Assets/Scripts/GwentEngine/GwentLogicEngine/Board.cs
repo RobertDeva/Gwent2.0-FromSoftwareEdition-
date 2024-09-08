@@ -47,5 +47,11 @@ namespace GwentEngine
             player1.Siege = Siege1;
             player2.Siege = Siege2;
         }
+
+        public void Start()
+        {
+            player1.PlayGame();
+            player2.PlayGame();
+        }
     }
 }

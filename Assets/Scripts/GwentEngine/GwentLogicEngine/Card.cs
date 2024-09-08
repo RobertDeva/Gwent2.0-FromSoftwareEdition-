@@ -57,10 +57,15 @@ namespace GwentEngine
             {
                 List<string> ranges = new List<string>();
                 foreach (var item in range)
-                    ranges.Add(item.ToString());
+                {
+                    if (!ranges.Contains(item.ToString()))
+                        ranges.Add(item.ToString());
+                    continue;
+                }
                 return ranges;
             }
         }
+        public string Description { get => description; }
         public bool inField;
         public string name;
         protected double? power;
@@ -104,6 +109,7 @@ namespace GwentEngine
         {
             MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
             Origin = zone.InvoqueZone;
+            Effects.CardEffect(this);
         }
         public override void ResetState()
         {
@@ -120,8 +126,7 @@ namespace GwentEngine
 
         public override void Invoke(FieldZone zone)
         {
-            MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
-            Origin = zone.InvoqueZone;
+            
         }
         public override void ResetState()
         {
@@ -154,9 +159,11 @@ namespace GwentEngine
         {
             MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
             Origin = zone.InvoqueZone;
+            Effects.CardEffect(this);
         }
         public override void ResetState()
         {
+            Effects.CardEffect(this);
         }
     }
 
@@ -180,9 +187,11 @@ namespace GwentEngine
         {
             MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
             Origin = zone.InvoqueZone;
+            Effects.CardEffect(this);
         }
         public override void ResetState()
         {
+            Effects.CardEffect(this);
         }
     }
     public class Despeje : WeatherCard
@@ -219,7 +228,6 @@ namespace GwentEngine
 
         public override void Invoke(FieldZone zone)
         {
-            
         }
         public override void ResetState()
         {

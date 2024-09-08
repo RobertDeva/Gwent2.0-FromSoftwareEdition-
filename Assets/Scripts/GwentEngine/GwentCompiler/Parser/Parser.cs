@@ -173,7 +173,23 @@ namespace GwentEngine
                 }
                 if (!Stream.Next(TokenValues.StatementSeparator))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ";  expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
+                }
+                if (!Stream.Next("description"))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "description expected"));
+                }
+                if (!Stream.Next(TokenValues.TwoPoints))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
+                }
+                if (Stream.Next(TokenType.Text))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "invalid assignament"));
+                }
+                else
+                {
+                    card.description = Stream.LookAhead().Value;
                 }
                 ParseOnActivation(errors);
                 

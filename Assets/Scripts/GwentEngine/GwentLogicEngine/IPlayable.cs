@@ -18,6 +18,7 @@ namespace GwentEngine
         public abstract string Type { get; }
         public abstract string Rank { get; }
         public abstract List<string> Range { get; }
+        public abstract string Description { get; }
 
         public void Invoke(FieldZone? zone)
         {

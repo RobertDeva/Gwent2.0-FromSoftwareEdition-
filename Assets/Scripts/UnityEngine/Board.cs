@@ -58,6 +58,7 @@ public class GameBoard : MonoBehaviour
     public void StartGame()
     {
         Board.SetPlayers(Player1.player, Player2.player);
+        Board.Start();
         TransformsZones[Board.player1.Hand] = Hand1;
         TransformsZones[Board.player2.Hand] = Hand2;
         TransformsZones[Board.player1.Graveyard] = Graveyard1;
@@ -75,24 +76,23 @@ public class GameBoard : MonoBehaviour
         {
             if (Hand1.transform.childCount < Player1.player.Hand.Count)
             {
-                if (Player1.player.Hand[Player1.player.Hand.Count - 1].Rank == GwentEngine.Rank.Silver.ToString())
+                if (Player1.player.Hand[^1].Rank == GwentEngine.Rank.Silver.ToString())
                 {
-                    Instantiate(SilverCard, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
-
+                    MetodosUtilesDeInstanciar.InstanciarCarta(SilverCard, Player1.player.Hand[^1], Player1);
                 }
-                else if (Player1.player.Hand[Player1.player.Hand.Count - 1].Rank == GwentEngine.Rank.Gold.ToString())
+                else if (Player1.player.Hand[^1].Rank == GwentEngine.Rank.Gold.ToString())
                 {
-                    Instantiate(GoldCard, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+                    MetodosUtilesDeInstanciar.InstanciarCarta(GoldCard, Player1.player.Hand[^1], Player1);
                 }
                 else
                 {
                     if (Player1.player.Hand[Player1.player.Hand.Count - 1].Type == GwentEngine.CardType.Unit.ToString())
                     {
-                        Instantiate(LureCard, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+                       MetodosUtilesDeInstanciar.InstanciarSeñuelo(LureCard, Player1.player.Hand[^1], Player1);
                     }
                     else
                     {
-                        Instantiate(Card, TransformsZones[Player1.player.Hand[Player1.player.Hand.Count - 1].Origin].transform, false);
+                        MetodosUtilesDeInstanciar.InstanciarCarta(Card, Player1.player.Hand[^1], Player1);
                     }
                 }
             }
@@ -100,22 +100,22 @@ public class GameBoard : MonoBehaviour
             {
                 if (Player2.player.Hand[Player2.player.Hand.Count - 1].Rank == GwentEngine.Rank.Silver.ToString())
                 {
-                    Instantiate(SilverCard, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                    MetodosUtilesDeInstanciar.InstanciarCarta(SilverCard, Player2.player.Hand[^1], Player2);
 
                 }
                 else if (Player2.player.Hand[Player2.player.Hand.Count - 1].Rank == GwentEngine.Rank.Gold.ToString())
                 {
-                    Instantiate(GoldCard, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                    MetodosUtilesDeInstanciar.InstanciarCarta(GoldCard, Player2.player.Hand[^1], Player2);
                 }
                 else
                 {
                     if (Player2.player.Hand[Player1.player.Hand.Count - 1].Type == GwentEngine.CardType.Unit.ToString())
                     {
-                        Instantiate(LureCard, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                        MetodosUtilesDeInstanciar.InstanciarSeñuelo(LureCard, Player2.player.Hand[^1], Player2);
                     }
                     else
                     {
-                        Instantiate(Card, TransformsZones[Player2.player.Hand[Player2.player.Hand.Count - 1].Origin].transform, false);
+                        MetodosUtilesDeInstanciar.InstanciarCarta(Card, Player2.player.Hand[^1], Player2);
                     }
                 }
             }

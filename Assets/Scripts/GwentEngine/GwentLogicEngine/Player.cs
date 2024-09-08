@@ -32,26 +32,20 @@ namespace GwentEngine
             Hand = new List<IPlayable>();
             Graveyard = new List<IPlayable>();
             Deck = new List<IPlayable>();
-            foreach (var card in mazo.Cards)
-            { 
-                card.Owner = this;
-                Deck.Add(card);
-                card.Origin = Deck;
-            }
         }
 
         public void Draw(out IPlayable card)
         {
             if (Hand.Count < 10 && Deck.Count > 0)
             {
-                MetodosUtiles.MoveList(Deck[Deck.Count - 1], Deck, Hand);
-                card = Hand[Hand.Count - 1];
+                MetodosUtiles.MoveList(Deck[^1], Deck, Hand);
+                card = Hand[^1];
                 card.Origin = card.Owner.Hand;
             }
             else if (Hand.Count > 10 && Deck.Count > 0)
             {
-                MetodosUtiles.MoveList(Deck[Deck.Count - 1], Deck, Graveyard);
-                card = Graveyard[Graveyard.Count - 1];
+                MetodosUtiles.MoveList(Deck[^1], Deck, Graveyard);
+                card = Graveyard[^1];
                 card.Origin = card.Owner.Graveyard;
             }
             else
@@ -59,6 +53,18 @@ namespace GwentEngine
                 card = null;
             }
             
+        }
+
+        public void PlayGame()
+        {
+            Deck = new List<IPlayable>();
+            foreach (var card in Mazo.Cards)
+            {
+                card.Owner = this;
+                Deck.Add(card);
+                card.Origin = Deck;
+            }
+            MetodosUtiles.Shuffle(Deck);
         }
     }
 

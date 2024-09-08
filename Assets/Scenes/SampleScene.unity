@@ -1402,6 +1402,7 @@ GameObject:
   - component: {fileID: 934079047}
   - component: {fileID: 934079049}
   - component: {fileID: 934079048}
+  - component: {fileID: 934079050}
   m_Layer: 5
   m_Name: Scorer
   m_TagString: Untagged
@@ -1473,6 +1474,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 934079046}
   m_CullTransparentMesh: 1
+--- !u!114 &934079050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934079046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0edde2fd5cde8d84683e01c6116ef0d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TotalAttackP1: {fileID: 1831092899}
+  TotalAttackP2: {fileID: 1374128580}
+  Player1: {fileID: 0}
+  Player2: {fileID: 0}
 --- !u!1 &964739418
 GameObject:
   m_ObjectHideFlags: 0
@@ -2248,6 +2265,10 @@ PrefabInstance:
       propertyPath: LifeToken2
       value: 
       objectReference: {fileID: 354488401}
+    - target: {fileID: -8328052153386547667, guid: d73eaa707453e90488b9198595237ac8, type: 3}
+      propertyPath: PlayerTurn
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1005555998934818538, guid: d73eaa707453e90488b9198595237ac8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
