@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,20 +11,22 @@ public class GameManager : MonoBehaviour
     public static int RoundS; //variable que por cual ronda va el juego
 
 
-    public GameObject TotalAttackP1; //Necesario para evaluar los ataques
-    public GameObject TotalAttackP2; //Necesario para evaluar los ataques
+    public TMP_Text TotalAttackP1; //Necesario para evaluar los ataques
+    public TMP_Text TotalAttackP2; //Necesario para evaluar los ataques
     public GameObject Player1;
     public GameObject Player2;
+    public GameObject Board;
     // Start is called before the first frame update
     void Start()
     {
-        
+        Board.GetComponent<GameBoard>().StartGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        TotalAttackP1.text = Player1.GetComponent<GwentPlayer>().TotalPower.ToString();
+        TotalAttackP2.text = Player2.GetComponent<GwentPlayer>().TotalPower.ToString();
     }
     //Metodo para arrancar el juego desde el boton de continuar 2
     public void ArrancarJuego()
@@ -76,6 +79,78 @@ public class GameManager : MonoBehaviour
                 p2.HasPassed = true;
                 PassP2 = true;
             }
+        }
+    }
+
+    public void EndedRound()
+    {
+        GwentPlayer player1 = Player1.GetComponent<GwentPlayer>();
+        GwentPlayer player2 = Player2.GetComponent<GwentPlayer>();
+
+        EvaluateRoundPower(player1, player2);
+
+        if (player1.PlayerLife == 0 && player2.PlayerLife == 0)
+        {
+            Debug.Log("Hubo un empate");
+            return;
+        }
+        else if (player1.PlayerLife == 0)
+        {
+            Debug.Log("Ganó el jugador 2");
+            return;
+        }
+        else if (player2.PlayerLife == 0)
+        {
+            Debug.Log("Ganó el jugador 1");
+            return;
+        }
+
+        Board.GetComponent<GameBoard>().Board.CleanField();
+        RoundDraw(player1, player2);
+        
+    }
+
+    private void EvaluateRoundPower(GwentPlayer player1, GwentPlayer player2)
+    {
+        if (player1.TotalPower > player2.TotalPower)
+        {
+            EvaluateAttackEndedRoundTools(player2);
+            player1.PlayerTurn = true;
+            player2.PlayerTurn = false;
+
+        }
+        if (player1.TotalPower < player2.TotalPower)
+        {
+            EvaluateAttackEndedRoundTools(player1);
+            player2.PlayerTurn = true;
+            player1.PlayerTurn = false;
+        }
+        if (player1.TotalPower == player2.TotalPower)
+        {
+            EvaluateAttackEndedRoundTools(player1);
+            EvaluateAttackEndedRoundTools(player2);
+            player1.PlayerTurn = true;
+            player2.PlayerTurn = false;
+        }
+    }
+    private void EvaluateAttackEndedRoundTools(GwentPlayer player)
+    {
+        player.PlayerLife--;
+        if(player.PlayerLife == 1)
+        {
+            player.LifeToken1.transform.GetChild(0).gameObject.SetActive(false);
+        }
+        else if(player.PlayerLife == 0)
+        {
+            player.LifeToken2.transform.GetChild(0).gameObject.SetActive(false);
+        }
+    }
+    private void RoundDraw(GwentPlayer player1, GwentPlayer player2)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            player1.Draw();
+            player2.Draw();
         }
     }
 

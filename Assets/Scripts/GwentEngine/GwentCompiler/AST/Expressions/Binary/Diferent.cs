@@ -27,7 +27,30 @@ namespace GwentEngine
             {
                 bool right = Right.CheckSemantic(context, scope, errors);
                 bool left = Left.CheckSemantic(context, scope, errors);
-
+                if (Left is Identifier)
+                {
+                    bool identifier = scope.AssignedIdentifier(Left.Value.ToString(), out Scope cntx);
+                    if (identifier)
+                    {
+                        Expression exp = cntx.VarYValores[Left.Value.ToString()];
+                        Left.Type = exp.Type;
+                    }
+                }
+                if (Right is Identifier)
+                {
+                    bool identifier = scope.AssignedIdentifier(Right.Value.ToString(), out Scope cntx);
+                    if (identifier)
+                    {
+                        Expression exp = cntx.VarYValores[Right.Value.ToString()];
+                        Left.Type = exp.Type;
+                    }
+                }
+                if(Left.Type != Right.Type)
+                {
+                    errors.Add(new CompilingError(Location, ErrorCode.Invalid, "we don't do that here..."));
+                    Type = ExpressionType.ErrorType;
+                    return false;
+                }
                 Type = ExpressionType.Bool;
                 return left && right;
             }

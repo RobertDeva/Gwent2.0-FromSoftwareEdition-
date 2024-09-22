@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using GwentEngine.GwentCompiler;
 
 namespace GwentEngine
 {
     public class Effects
     {
+        public static Dictionary<string,Effect> CompilatedEffects = new Dictionary<string,Effect>();
         public static void CardEffect(Card card)
         {
             if (EffectsDictionary.EffectDictionary.TryGetValue(card.effect.ToString(), out var effect))
@@ -14,7 +16,7 @@ namespace GwentEngine
                 effect(card);
             }
         }
-        public static void Señuelo(Card TriggerCard, Card AffectedCard)
+        public static void Señuelo(ICard TriggerCard, ICard AffectedCard, out bool swicht)
         {
             if(TriggerCard.Owner == AffectedCard.Owner && !TriggerCard.InField)
             {
@@ -26,8 +28,11 @@ namespace GwentEngine
                     MetodosUtiles.MoveList(AffectedCard, AffectedCard.Origin, AffectedCard.Owner.Hand);
                     AffectedCard.Origin = AffectedCard.Owner.Hand;
                     AffectedCard.InField = false;
+                    swicht = true;
+                    return;
                 }
             }
+            swicht = false;
         }
         public static void Weather(Card Card)
         {
@@ -84,15 +89,15 @@ namespace GwentEngine
         }
         public static void Draw(Card Card)
         {
-            Card.Owner.Draw(out IPlayable card);            
+            Card.Owner.Draw(out ICard card);            
         }
         public static void Companion(Card Card)
         {
             int SimilarCards = 0;
-            List<IPlayable> cards = new List<IPlayable>();
+            List<ICard> cards = new List<ICard>();
             SimilarCards = CheckSimilarCards(cards,Card);
 
-            foreach (IPlayable card in cards)
+            foreach (ICard card in cards)
             {
                 card.Power = card.Power * SimilarCards;
             }
@@ -100,10 +105,10 @@ namespace GwentEngine
         public static void Average(Card Card)
         {
             int count = 0;
-            List<IPlayable> cards = new List<IPlayable>();
+            List<ICard> cards = new List<ICard>();
             double Total = CheckCardsInField(count,cards);
 
-            foreach(IPlayable card in cards)
+            foreach(ICard card in cards)
             {
                 card.Power = Total / count;
             }
@@ -112,6 +117,7 @@ namespace GwentEngine
         {
             CleanWeather();
             CleanWeatherConsecuences();
+            Card.Origin = Card.Owner.Graveyard;
         }
         private static void CleanWeather()
         {
@@ -141,7 +147,7 @@ namespace GwentEngine
             CleanLine(Board.Siege2.InvoqueZone);
 
         }
-        private static void CleanLine(List<IPlayable> cards)
+        private static void CleanLine(List<ICard> cards)
         {
             foreach (var item in cards)
             {
@@ -151,7 +157,7 @@ namespace GwentEngine
                 }
             }
         }
-        private static double CheckCardsInField(int count, List<IPlayable> cards)
+        private static double CheckCardsInField(int count, List<ICard> cards)
         {
             double Total = 0;
             CheckInLine(count, Board.Melee1.InvoqueZone, cards, Total);
@@ -162,9 +168,9 @@ namespace GwentEngine
             CheckInLine(count, Board.Siege2.InvoqueZone, cards, Total);
             return Total;
         }
-        private static void CheckInLine(int count,List<IPlayable> InField , List<IPlayable> cards, double power)
+        private static void CheckInLine(int count,List<ICard> InField , List<ICard> cards, double power)
         {
-            foreach (IPlayable card in InField)
+            foreach (ICard card in InField)
             {
                 power += card.Power;
                 count++;
@@ -175,7 +181,7 @@ namespace GwentEngine
             }
         }
 
-        private static int CheckSimilarCards(List<IPlayable> Affected, Card Card)
+        private static int CheckSimilarCards(List<ICard> Affected, Card Card)
         {
             int count = 0;
             CheckInList(count, Board.Melee1.InvoqueZone, Affected, Card);
@@ -186,7 +192,7 @@ namespace GwentEngine
             CheckInList(count, Board.Siege2.InvoqueZone, Affected, Card);
             return count;
         }
-        private static void CheckInList(int count, List<IPlayable> InFieldCards, List<IPlayable> Affected, Card Card)
+        private static void CheckInList(int count, List<ICard> InFieldCards, List<ICard> Affected, Card Card)
         {
             foreach(var card in InFieldCards)
             {
@@ -216,7 +222,7 @@ namespace GwentEngine
                 }
             }
         }
-        private static double MinPower(List<IPlayable> cards)
+        private static double MinPower(List<ICard> cards)
         {
             double Min = int.MaxValue;
             foreach (var card in cards)
@@ -233,7 +239,7 @@ namespace GwentEngine
             return Min;
         }
 
-        private static double MaxPower(List<IPlayable> cards)
+        private static double MaxPower(List<ICard> cards)
         {
             double Max = int.MinValue;
             foreach(var card in cards)

@@ -22,7 +22,84 @@ namespace GwentEngine
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
-                throw new NotImplementedException();
+                bool right = Right.CheckSemantic(context, scope, errors);
+                bool left = Left.CheckSemantic(context, scope, errors);
+
+                if(Left is Identifier)
+                {
+                    bool identifier = scope.AssignedIdentifier(Left.Value.ToString(), out Scope cntx);
+                    if(identifier)
+                    {
+                        cntx.VarYValores[Left.Value.ToString()] = Right;
+                    }
+                    else
+                    {
+                        scope.VarYValores.Add(Left.Value.ToString(), Right);
+                    }
+
+                }
+                if(Left is DotNotation)
+                {
+                    BinaryExpression dot = (DotNotation)Left;
+                    if(dot.Type == ExpressionType.Card)
+                    {
+                        if((string)dot.Right.Value == "Power")
+                        {
+                            if(Right.Type != ExpressionType.Number)
+                            {
+                                errors.Add(new CompilingError(Location, ErrorCode.Invalid, "Invalid type for assign"));
+                                Type = ExpressionType.ErrorType;
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            errors.Add(new CompilingError(Location, ErrorCode.Invalid, "Invalid type for assign"));
+                            Type = ExpressionType.ErrorType;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        errors.Add(new CompilingError(Location, ErrorCode.Invalid, "Invalid "));
+                        Type = ExpressionType.ErrorType;
+                        return false;
+                    }
+                }
+
+                if (Right.Type == ExpressionType.Number)
+                {
+                    double a;
+                    if (Left.Type != ExpressionType.Number || double.TryParse(Left.Value.ToString(), out a))
+                    {
+                        errors.Add(new CompilingError(Location, ErrorCode.Invalid, "invalid type for assign"));
+                        Type = ExpressionType.ErrorType;
+                        return false;
+                    }
+                }
+                else if (Right.Type == ExpressionType.Text)
+                {
+                    string a = Left.Value.ToString();
+                    if (Left.Type != ExpressionType.Text || a[0] == '"')
+                    {
+                        errors.Add(new CompilingError(Location, ErrorCode.Invalid, "invalid type for assign"));
+                        Type = ExpressionType.ErrorType;
+                        return false;
+                    }
+                }
+                else if (Right.Type == ExpressionType.Bool)
+                {
+                    bool a;
+                    if (Left.Type != ExpressionType.Bool || bool.TryParse(Left.Value.ToString(), out a))
+                    {
+                        errors.Add(new CompilingError(Location, ErrorCode.Invalid, "invalid type for assign"));
+                        Type = ExpressionType.ErrorType;
+                        return false;
+                    }
+                }
+
+                Type = ExpressionType.Anytype;
+                return right && left;
             }
 
             public override string ToString()

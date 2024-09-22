@@ -7,7 +7,7 @@ namespace GwentEngine
 
     public abstract class FieldZone
     {
-        public List<IPlayable> InvoqueZone { get; set; }
+        public List<ICard> InvoqueZone { get; set; }
     }
 
     public class UnitZone : FieldZone

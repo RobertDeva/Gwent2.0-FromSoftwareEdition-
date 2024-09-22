@@ -10,15 +10,28 @@ namespace GwentEngine
         {
             public string Id { get; private set; }
 
-            public TypeOfValue typeOfValue { get; private set; }
+            public TypeOfValue TypeOfValue { get; private set; }
 
 
             public Param(string id, TypeOfValue typeOfValue)
             {
-                this.Id = id;
-                this.typeOfValue = typeOfValue;
+                Id = id;
+                TypeOfValue = typeOfValue;
             }
         }
+        public class ParamValue
+        {
+            public string Id { get; private set; }
+            public Expression Expression { get; private set; }
+
+            public ParamValue(string id, Expression expression)
+            {
+                Id = id;
+                Expression = expression;
+            }
+
+        }
+
 
         public enum TypeOfValue
         {

@@ -714,8 +714,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b6a40b703699bc448154ae0ddf97998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player1: {fileID: 0}
-  Player2: {fileID: 0}
+  Player1: {fileID: 3840754611014678138}
+  Player2: {fileID: 1283856811}
   Hand1: {fileID: 64702011}
   Hand2: {fileID: 1009484822}
   Graveyard1: {fileID: 1053465885}
@@ -735,10 +735,10 @@ MonoBehaviour:
   MeleeWeather: {fileID: 601505170}
   RangeWeather: {fileID: 1007610931}
   SiegeWeather: {fileID: 2085095157}
-  Card: {fileID: 0}
-  GoldCard: {fileID: 0}
-  SilverCard: {fileID: 0}
-  LureCard: {fileID: 0}
+  Card: {fileID: 8260471751500034765, guid: e57fd52392206244faf029cfa4ea6142, type: 3}
+  GoldCard: {fileID: 8260471751500034765, guid: c89235ebf7680e3498a023340fcad8e8, type: 3}
+  SilverCard: {fileID: 8260471751500034765, guid: 124e9db15073be64b9ec12e5b2e4565e, type: 3}
+  LureCard: {fileID: 8260471751500034765, guid: 1640d5bb38661134f93a6a15b58475ca, type: 3}
 --- !u!1 &292704146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1490,6 +1490,7 @@ MonoBehaviour:
   TotalAttackP2: {fileID: 1374128580}
   Player1: {fileID: 0}
   Player2: {fileID: 0}
+  Board: {fileID: 0}
 --- !u!1 &964739418
 GameObject:
   m_ObjectHideFlags: 0
@@ -2138,6 +2139,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1383650649}
     m_Modifications:
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3840754611014678138}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LeaderHabilty
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GwentPlayer, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 860492899598463415, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2267,7 +2284,7 @@ PrefabInstance:
       objectReference: {fileID: 354488401}
     - target: {fileID: -8328052153386547667, guid: d73eaa707453e90488b9198595237ac8, type: 3}
       propertyPath: PlayerTurn
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1005555998934818538, guid: d73eaa707453e90488b9198595237ac8, type: 3}
       propertyPath: m_Pivot.x
@@ -2363,6 +2380,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1005555998934818538, guid: d73eaa707453e90488b9198595237ac8, type: 3}
   m_PrefabInstance: {fileID: 1283856809}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1283856811 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -8328052153386547667, guid: d73eaa707453e90488b9198595237ac8, type: 3}
+  m_PrefabInstance: {fileID: 1283856809}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a498e49009b68478e538adaeeb4b1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1311283316
 GameObject:
   m_ObjectHideFlags: 0
@@ -2556,6 +2584,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 964739419}
     m_Modifications:
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3840754611014678138}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LeaderHabilty
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GwentPlayer, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 196766716544604141, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 860492899598463415, guid: 0dccb2e6801e5e54aad8a198957798ec, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4163,6 +4219,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1005555998934818538, guid: d73eaa707453e90488b9198595237ac8, type: 3}
   m_PrefabInstance: {fileID: 3840754611014678136}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3840754611014678138 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -8328052153386547667, guid: d73eaa707453e90488b9198595237ac8, type: 3}
+  m_PrefabInstance: {fileID: 3840754611014678136}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92a498e49009b68478e538adaeeb4b1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6867896331089805137
 PrefabInstance:
   m_ObjectHideFlags: 0

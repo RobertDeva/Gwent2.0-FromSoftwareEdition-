@@ -12,7 +12,9 @@ namespace GwentEngine
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
-                throw new System.NotImplementedException();
+                if(context.types.Contains(Value))
+                    return true;
+                return false;
             }
 
             public CardType(string value, CodeLocation location) : base(location)

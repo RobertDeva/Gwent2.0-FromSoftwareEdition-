@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class Card : MonoBehaviour
 {
     public GwentPlayer player;
-    public IPlayable card;
+    public ICard card;
     public Image cardImage;
     public GameObject Back;
 
@@ -31,11 +31,45 @@ public class Card : MonoBehaviour
             transform.SetParent(GameBoard.TransformsZones[card.Origin].transform, false);
             if(card.Type == "Weather" && card.Origin != card.Owner.Hand)
             {
-                card.ResetState();
+                card.CastEffect();
             }
             if (card.Type == "Upgrade" && card.Origin != card.Owner.Hand)
             {
-                card.ResetState();
+                card.CastEffect();
+            }
+        }
+    }
+
+    public void SetInMelee()
+    {
+        if(player.PlayerTurn)
+        {
+            card.InvokeInMelee(out bool InMelee);
+            if (InMelee)
+            {
+                GameManager.ChangeTurn();
+            }
+        }
+    }
+    public void SetInRange()
+    {
+        if(player.PlayerTurn)
+        {
+            card.InvokeInRange(out bool InRange);
+            if(InRange)
+            {
+                GameManager.ChangeTurn();
+            }
+        }
+    }
+    public void SetInSiege()
+    {
+        if (player.PlayerTurn)
+        {
+            card.InvokeInSiege(out bool InSiege);
+            if (InSiege)
+            {
+                GameManager.ChangeTurn();
             }
         }
     }

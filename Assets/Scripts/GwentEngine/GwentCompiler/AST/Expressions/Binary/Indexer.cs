@@ -19,7 +19,39 @@ namespace GwentEngine
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
-                throw new NotImplementedException();
+                bool right = Right.CheckSemantic(context, scope, errors);
+                bool left = Left.CheckSemantic(context, scope, errors);
+
+                if (Left is Identifier)
+                {
+                    bool tuple = scope.AssignedIdentifier(Left.Value.ToString(), out Scope cntx);
+                    if (tuple)
+                    {
+                        Expression expression = cntx.VarYValores[Left.Value.ToString()];
+                        Left.Type = expression.Type;
+                    }
+                }
+
+                if (Right is Identifier)
+                {
+                    bool tuple = scope.AssignedIdentifier(Left.Value.ToString(), out Scope cntx);
+                    if (tuple)
+                    {
+                        Expression expression = cntx.VarYValores[Left.Value.ToString()];
+                        Left.Type = expression.Type;
+                    }
+                }
+
+
+                if (Right.Type != ExpressionType.Number || Left.Type != ExpressionType.List)
+                {
+                    errors.Add(new CompilingError(Location, ErrorCode.Invalid, "invalid indexer"));
+                    Type = ExpressionType.ErrorType;
+                    return false;
+                }
+
+                Type = ExpressionType.Card;
+                return right && left;
             }
 
             public override string ToString()

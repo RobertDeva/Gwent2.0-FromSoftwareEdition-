@@ -23,14 +23,14 @@ namespace GwentEngine
             {
                Value = InnerExpression.Value;
             }
-            public override bool CheckSemantic(Context context, Scope table, List<CompilingError> errors)
+            public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
-                throw new NotImplementedException();
+                return InnerExpression.CheckSemantic(context, scope, errors);
             }
 
             public override void Evaluate()
             {
-
+                InnerExpression.Evaluate();
             }
 
             public override string ToString()

@@ -24,6 +24,15 @@ namespace GwentEngine
             Then, we check semantics of elements and cards */
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
+                bool checkEffects = true;
+                foreach (Effect effect in Effects.Values)
+                {
+                    checkEffects = checkEffects && effect.CollectElements(context, scope.CreateChild(), errors);
+                }
+                foreach (Effect effect in Effects.Values)
+                {
+                    checkEffects = checkEffects && effect.CheckSemantic(context, scope.CreateChild(), errors);
+                }
 
                 bool checkCards = true;
                 foreach (Card card in Cards.Values)
@@ -31,7 +40,7 @@ namespace GwentEngine
                     checkCards = checkCards && card.CheckSemantic(context, scope, errors);
                 }
 
-                return checkCards;
+                return checkCards && checkEffects;
             }
 
             public void Evaluate()

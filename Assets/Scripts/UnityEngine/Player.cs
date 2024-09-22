@@ -11,6 +11,10 @@ public class GwentPlayer : MonoBehaviour
     public bool ActivateLeader; //Booleano que avisa si el jugador ya jugó su carta de lider
     public bool PlayerTurn; //Representa si es turno del jugador
     public bool SeñueloActivo; //Representa si se va a jugar un señuelo
+    public ICard señuelo;
+    public bool CardSelected; //Representa si se va selecciono la carta para hacer el cambio;
+    public ICard selectedCard;
+    public double TotalPower;
 
     public GameObject Card;
     public GameObject SilverCard;
@@ -22,9 +26,9 @@ public class GwentPlayer : MonoBehaviour
 
     public void Draw()
     {
-        IPlayable playable;
+        ICard playable;
 
-        player.Draw(out IPlayable card);
+        player.Draw(out ICard card);
         playable = card;
         if (playable != null)
         {
@@ -50,10 +54,40 @@ public class GwentPlayer : MonoBehaviour
         }
     }
 
+    public void LeaderHabilty()
+    {
+        if (!ActivateLeader && PlayerTurn)
+        { 
+            player.Leader.CastEffect();
+            ActivateLeader = true;
+            GameManager.ChangeTurn();
+        }
+    }
+
     public void CancelLure()
     {
         SeñueloActivo = false;
+        señuelo = null;
+    }
+    private void Lure()
+    {
+        Effects.Señuelo(señuelo, selectedCard, out bool swicht);
+        if (swicht)
+        {
+            SeñueloActivo = false;
+            CardSelected = false;
+            señuelo = null;
+            selectedCard = null;
+            GameManager.ChangeTurn();
+        }
     }
 
-    
+    public void Update()
+    {
+        TotalPower = player.GetTotalPower();
+        if (PlayerTurn && SeñueloActivo && CardSelected)
+        {
+           Lure();
+        }
+    }
 }

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Lure : MonoBehaviour
 {
     public GwentPlayer player;
-    public IPlayable card;
+    public ICard card;
     public Image cardImage;
     public GameObject Back;
 
@@ -34,7 +34,8 @@ public class Lure : MonoBehaviour
     {
         if (player.PlayerTurn)
         {
-            
+            player.SeñueloActivo = true;
+            player.señuelo = card;
         }
     }
 }

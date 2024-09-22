@@ -9,9 +9,9 @@ namespace GwentEngine
         public string Id { get; }
         public Faction DeckFaction { get; set; }
         public LeaderCard Leader { get; }
-        public List<IPlayable> Cards { get; set; }
+        public List<ICard> Cards { get; set; }
        
-        public Deck(string id,LeaderCard leader, List<IPlayable> cards)
+        public Deck(string id,LeaderCard leader, List<ICard> cards)
         {
             Id = id;
             Leader = leader;

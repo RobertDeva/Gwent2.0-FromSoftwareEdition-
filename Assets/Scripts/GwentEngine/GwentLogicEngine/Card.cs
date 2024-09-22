@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace GwentEngine
 {
-    public abstract class Card : IPlayable
+    public abstract class Card : ICard
     {
         public Player Owner { get; set; }
-        public List<IPlayable> Origin { get; set; }
+        public List<ICard> Origin { get; set; }
         public bool InField { get => inField; set => inField = value; }
         public bool AffectedByWeather { get; set; }
         public bool AffectedByBuff { get; set; }
@@ -79,6 +79,7 @@ namespace GwentEngine
 
         public abstract void Invoke(FieldZone zone);
         public abstract void ResetState();
+        public abstract void CastEffect();
     }
 
     public class UnitCard : Card
@@ -109,11 +110,18 @@ namespace GwentEngine
         {
             MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
             Origin = zone.InvoqueZone;
-            Effects.CardEffect(this);
+            CastEffect();
         }
         public override void ResetState()
         {
             actualPower = power;
+            inField = false;
+            AffectedByBuff = false;
+            AffectedByWeather = false;
+        }
+        public override void CastEffect()
+        {
+            Effects.CardEffect(this);
         }
     }
 
@@ -129,6 +137,10 @@ namespace GwentEngine
             
         }
         public override void ResetState()
+        {
+        }
+
+        public override void CastEffect()
         {
         }
     }
@@ -159,9 +171,13 @@ namespace GwentEngine
         {
             MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
             Origin = zone.InvoqueZone;
-            Effects.CardEffect(this);
+            CastEffect();
         }
         public override void ResetState()
+        {
+            inField = false;
+        }
+        public override void CastEffect()
         {
             Effects.CardEffect(this);
         }
@@ -187,9 +203,13 @@ namespace GwentEngine
         {
             MetodosUtiles.MoveList(this, Origin, zone.InvoqueZone);
             Origin = zone.InvoqueZone;
-            Effects.CardEffect(this);
+            CastEffect(); 
         }
         public override void ResetState()
+        {
+            inField = false;
+        }
+        public override void CastEffect()
         {
             Effects.CardEffect(this);
         }
@@ -211,6 +231,9 @@ namespace GwentEngine
             AffectedByBuff = false;
             AffectedByWeather = false;
         }
+        public override void CastEffect()
+        {
+        }
     }
     public class LeaderCard : SpecialCard
     {
@@ -231,6 +254,10 @@ namespace GwentEngine
         }
         public override void ResetState()
         {
+        }
+        public override void CastEffect()
+        {
+            Effects.CardEffect(this);
         }
     }
     

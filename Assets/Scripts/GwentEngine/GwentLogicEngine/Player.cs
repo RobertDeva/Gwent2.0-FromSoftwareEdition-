@@ -6,14 +6,14 @@ namespace GwentEngine
 {
     public class Player
     { 
-        public Board GetBoard { get; set; }
+        public Board Board { get; set; }
         public Player Oponent { get; set; }
         public string Id { get; set; }
         public Deck Mazo { get; set; }
         public LeaderCard Leader { get; set; }
-        public List<IPlayable> Hand { get; set; }
-        public List<IPlayable> Graveyard { get; set; }
-        public List<IPlayable> Deck { get; set; }
+        public List<ICard> Hand { get; set; }
+        public List<ICard> Graveyard { get; set; }
+        public List<ICard> Deck { get; set; }
         public UnitZone Melee { get; set; }
         public UpgradeZone UpgradeMelee { get; set; }
         public WeatherZone MeleeWeather { get; set; }
@@ -29,12 +29,12 @@ namespace GwentEngine
             Id = id;
             Mazo = mazo;
             Leader = mazo.Leader;
-            Hand = new List<IPlayable>();
-            Graveyard = new List<IPlayable>();
-            Deck = new List<IPlayable>();
+            Hand = new List<ICard>();
+            Graveyard = new List<ICard>();
+            Deck = new List<ICard>();
         }
 
-        public void Draw(out IPlayable card)
+        public void Draw(out ICard card)
         {
             if (Hand.Count < 10 && Deck.Count > 0)
             {
@@ -57,7 +57,7 @@ namespace GwentEngine
 
         public void PlayGame()
         {
-            Deck = new List<IPlayable>();
+            Deck = new List<ICard>();
             foreach (var card in Mazo.Cards)
             {
                 card.Owner = this;
@@ -65,6 +65,35 @@ namespace GwentEngine
                 card.Origin = Deck;
             }
             MetodosUtiles.Shuffle(Deck);
+        }
+        public double GetTotalPower()
+        {
+            double power = 0;
+            ListPower(power, Melee.InvoqueZone);
+            ListPower(power, Range.InvoqueZone);
+            ListPower(power, Siege.InvoqueZone);
+            return power;            
+        }
+        private double ListPower(double power, List<ICard> cards)
+        {
+            foreach (var card in cards)
+            {
+                double cardPow = 0;
+                if (card.AffectedByWeather)
+                {
+                    cardPow += 1;
+                }
+                else
+                {
+                    cardPow += card.Power;
+                }
+                if (card.AffectedByBuff)
+                {
+                    cardPow *= 2;
+                }
+                power += cardPow;
+            }
+            return power;
         }
     }
 

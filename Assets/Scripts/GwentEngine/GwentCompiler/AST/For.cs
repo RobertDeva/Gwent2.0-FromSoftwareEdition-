@@ -15,7 +15,38 @@ namespace GwentEngine
             }
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
-                throw new System.NotImplementedException();
+                bool CheckInstruction = false;
+                bool CheckInstructions = true;
+                foreach (ASTNode instruction in ActionList)
+                {
+                    if (!(instruction is Assign))
+                    {
+                        if (!(instruction is While) && !(instruction is For) && !(instruction is DotNotation))
+                        {
+                            errors.Add(new CompilingError(Location, ErrorCode.Invalid, "Invalid instruction"));
+                            CheckInstructions = false;
+                            continue;
+                        }
+                    }
+
+
+                    if (instruction is While || instruction is For)
+                    {
+                        CheckInstruction = instruction.CheckSemantic(context, scope.CreateChild(), errors);
+                    }
+                    else
+                    {
+                        CheckInstruction = instruction.CheckSemantic(context, scope, errors);
+                    }
+
+
+                    if (CheckInstruction == false)
+                    {
+                        CheckInstructions = false;
+                    }
+                }
+
+                return CheckInstructions;
             }
             
         }

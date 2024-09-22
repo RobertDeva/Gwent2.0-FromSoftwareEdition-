@@ -34,7 +34,7 @@ public class GameBoard : MonoBehaviour
     public GameObject LureCard;
 
     public Board Board = new();
-    public static Dictionary<List<IPlayable>, GameObject> TransformsZones = new();
+    public static Dictionary<List<ICard>, GameObject> TransformsZones = new();
 
     public void Start()
     {
@@ -76,49 +76,59 @@ public class GameBoard : MonoBehaviour
         {
             if (Hand1.transform.childCount < Player1.player.Hand.Count)
             {
-                if (Player1.player.Hand[^1].Rank == GwentEngine.Rank.Silver.ToString())
-                {
-                    MetodosUtilesDeInstanciar.InstanciarCarta(SilverCard, Player1.player.Hand[^1], Player1);
-                }
-                else if (Player1.player.Hand[^1].Rank == GwentEngine.Rank.Gold.ToString())
-                {
-                    MetodosUtilesDeInstanciar.InstanciarCarta(GoldCard, Player1.player.Hand[^1], Player1);
-                }
-                else
-                {
-                    if (Player1.player.Hand[Player1.player.Hand.Count - 1].Type == GwentEngine.CardType.Unit.ToString())
-                    {
-                       MetodosUtilesDeInstanciar.InstanciarSeñuelo(LureCard, Player1.player.Hand[^1], Player1);
-                    }
-                    else
-                    {
-                        MetodosUtilesDeInstanciar.InstanciarCarta(Card, Player1.player.Hand[^1], Player1);
-                    }
-                }
+                UpdateHand(Player1);
             }
             if (Hand2.transform.childCount < Player2.player.Hand.Count)
             {
-                if (Player2.player.Hand[Player2.player.Hand.Count - 1].Rank == GwentEngine.Rank.Silver.ToString())
-                {
-                    MetodosUtilesDeInstanciar.InstanciarCarta(SilverCard, Player2.player.Hand[^1], Player2);
-
-                }
-                else if (Player2.player.Hand[Player2.player.Hand.Count - 1].Rank == GwentEngine.Rank.Gold.ToString())
-                {
-                    MetodosUtilesDeInstanciar.InstanciarCarta(GoldCard, Player2.player.Hand[^1], Player2);
-                }
-                else
-                {
-                    if (Player2.player.Hand[Player1.player.Hand.Count - 1].Type == GwentEngine.CardType.Unit.ToString())
-                    {
-                        MetodosUtilesDeInstanciar.InstanciarSeñuelo(LureCard, Player2.player.Hand[^1], Player2);
-                    }
-                    else
-                    {
-                        MetodosUtilesDeInstanciar.InstanciarCarta(Card, Player2.player.Hand[^1], Player2);
-                    }
-                }
+                UpdateHand(Player2);
             }
         }
     }
+
+    private void UpdateHand(GwentPlayer player)
+    {
+        foreach (var card in player.player.Hand)
+        {
+            bool CardInstanciated = false;
+            foreach (Transform carta in TransformsZones[player.player.Hand].transform)
+            {
+                Card gameobject = carta.GetComponent<Card>();
+                if (gameobject.card == card)
+                    CardInstanciated = true;
+                else
+                {
+                    Lure lure = carta.GetComponent<Lure>();
+                    if (lure.card == card)
+                        CardInstanciated = true;
+                }
+            }
+            if (!CardInstanciated)
+            {
+                InstanciateInHand(player, card);
+            }
+        }
+    }
+    private void InstanciateInHand(GwentPlayer player, ICard card)
+    {
+        if (card.Rank == GwentEngine.Rank.Silver.ToString())
+        {
+            MetodosUtilesDeInstanciar.InstanciarCarta(SilverCard, card, player);
+        }
+        else if (card.Rank == GwentEngine.Rank.Gold.ToString())
+        {
+            MetodosUtilesDeInstanciar.InstanciarCarta(GoldCard, card, player);
+        }
+        else
+        {
+            if (card.Type == GwentEngine.CardType.Unit.ToString())
+            {
+                MetodosUtilesDeInstanciar.InstanciarSeñuelo(LureCard, card, player);
+            }
+            else
+            {
+                MetodosUtilesDeInstanciar.InstanciarCarta(Card, card, player);
+            }
+        }
+    }
+
 }

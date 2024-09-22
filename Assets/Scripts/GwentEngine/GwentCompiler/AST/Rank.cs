@@ -11,7 +11,9 @@ namespace GwentEngine
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
-                throw new System.NotImplementedException();
+               if(context.ranks.Contains(Value))
+                    return true;
+                return false;
             }
 
             public Rank( string value, CodeLocation location) : base(location)
