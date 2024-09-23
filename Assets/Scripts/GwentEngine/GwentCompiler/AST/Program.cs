@@ -45,10 +45,7 @@ namespace GwentEngine
 
             public void Evaluate()
             {
-                foreach (Card card in Cards.Values)
-                {
-                    //card.Evaluate();
-                }
+                
             }
 
             public override string ToString()

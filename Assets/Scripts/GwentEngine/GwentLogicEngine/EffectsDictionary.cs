@@ -6,7 +6,7 @@ namespace GwentEngine
 {
     public class EffectsDictionary
     {
-        public delegate void Effect(Card card);
+        public delegate void Effect(ICard card);
         public static Dictionary<string,Effect> EffectDictionary = new();
 
         public void AddToDictionary()

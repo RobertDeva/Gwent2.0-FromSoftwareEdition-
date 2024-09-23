@@ -17,7 +17,19 @@ namespace GwentEngine
 
             public override void Evaluate()
             {
+                Right.Evaluate();
+                Left.Evaluate();
 
+
+                if (Left is Identifier)
+                {
+
+                    if (EffectExecutation.identifiers.ContainsKey(Left.Value.ToString()))
+                    {
+                        EffectExecutation.identifiers[Left.Value.ToString()] = Right;
+                    }
+
+                }
             }
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)

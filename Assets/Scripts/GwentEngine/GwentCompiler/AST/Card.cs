@@ -103,8 +103,7 @@ namespace GwentEngine
                     }
                     else
                     {
-                        range
-                            = false;
+                        range = false;
                         errors.Add(new CompilingError(Location, ErrorCode.Invalid, "this range is not acceptable"));
                     }
                 }
@@ -113,7 +112,12 @@ namespace GwentEngine
                     errors.Add(new CompilingError(Location, ErrorCode.Invalid, "power must be numerical"));
                     checkpower = false;
                 }
-                return checkpower && faction && type && rank && range;
+                bool card = checkpower && faction && type && rank && range;
+                if(card)
+                {
+                    Cards.CompilatedCards.Add(this);
+                }
+                return card;
             }
 
             public Card(string id ,CodeLocation location) : base(location)
@@ -141,7 +145,7 @@ namespace GwentEngine
 
             public void CastEffect()
             {
-
+                EffectExecutation.ApplyEffect(this);
             }
                
         }

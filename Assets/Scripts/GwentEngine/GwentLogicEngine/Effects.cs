@@ -34,9 +34,9 @@ namespace GwentEngine
             }
             swicht = false;
         }
-        public static void Weather(Card Card)
+        public static void Weather(ICard Card)
         {
-            WeatherZone weather = CheckWeatherZone(Card);
+            WeatherZone weather = CheckWeatherZone((Card)Card);
             if(weather != null)
             {
                 foreach(var item in weather.UnitZone1.InvoqueZone)
@@ -47,9 +47,9 @@ namespace GwentEngine
                          item.AffectedByWeather = true;
             }
         }
-        public static void Buff(Card Card)
+        public static void Buff(ICard Card)
         {
-            UpgradeZone upgrade = CheckUpgradeZone(Card);
+            UpgradeZone upgrade = CheckUpgradeZone((Card)Card);
             if (upgrade != null)
             {
                 foreach(var item in upgrade.UnitZone.InvoqueZone)
@@ -57,11 +57,11 @@ namespace GwentEngine
                          item.AffectedByBuff = true;
             }
         }
-        public static void Destruction(Card Card)
+        public static void Destruction(ICard Card)
         {
             UnitZoneToDestroy();
         }
-        public static void GreaterDeath(Card Card)
+        public static void GreaterDeath(ICard Card)
         {
             double M1 = MaxPower(Board.Melee1.InvoqueZone);
             double M2 = MaxPower(Board.Melee2.InvoqueZone);
@@ -77,7 +77,7 @@ namespace GwentEngine
 
             GreaterDeathClean(max);
         }
-        public static void Death(Card Card)
+        public static void Death(ICard Card)
         {
             double MO = MinPower(Card.Owner.Oponent.Melee.InvoqueZone);
             double RO = MinPower(Card.Owner.Oponent.Range.InvoqueZone);
@@ -85,24 +85,24 @@ namespace GwentEngine
 
             double Min = MinValueNoCero(MO, RO, SO);
 
-            DeathClean(Min, Card);
+            DeathClean(Min, (Card)Card);
         }
-        public static void Draw(Card Card)
+        public static void Draw(ICard Card)
         {
             Card.Owner.Draw(out ICard card);            
         }
-        public static void Companion(Card Card)
+        public static void Companion(ICard Card)
         {
             int SimilarCards = 0;
             List<ICard> cards = new List<ICard>();
-            SimilarCards = CheckSimilarCards(cards,Card);
+            SimilarCards = CheckSimilarCards(cards,(Card)Card);
 
             foreach (ICard card in cards)
             {
                 card.Power = card.Power * SimilarCards;
             }
         }
-        public static void Average(Card Card)
+        public static void Average(ICard Card)
         {
             int count = 0;
             List<ICard> cards = new List<ICard>();
@@ -113,7 +113,7 @@ namespace GwentEngine
                 card.Power = Total / count;
             }
         }
-        public static void Despeje(Card Card)
+        public static void Despeje(ICard Card)
         {
             CleanWeather();
             CleanWeatherConsecuences();
@@ -204,7 +204,7 @@ namespace GwentEngine
             }
         }
 
-        public static void DeathClean(double min, Card Card)
+        public static void DeathClean(double min, ICard Card)
         {
             List<UnitZone> unitZones = new List<UnitZone>() {Card.Owner.Oponent.Melee, Card.Owner.Oponent.Range, Card.Owner.Oponent.Siege };
             foreach (UnitZone unitZone in unitZones)
@@ -286,7 +286,7 @@ namespace GwentEngine
 
             ClearLine(Count);
         }
-        private static UpgradeZone CheckUpgradeZone(Card Card)
+        private static UpgradeZone CheckUpgradeZone(ICard Card)
         {
             if (Card.Origin == Card.Owner.UpgradeMelee.InvoqueZone)
                 return Card.Owner.UpgradeMelee;
@@ -298,7 +298,7 @@ namespace GwentEngine
             return null;
         }
         
-        private static WeatherZone CheckWeatherZone(Card Card)
+        private static WeatherZone CheckWeatherZone(ICard Card)
         {
             if (Card.Origin == Card.Owner.MeleeWeather.InvoqueZone)
                 return Card.Owner.MeleeWeather;
