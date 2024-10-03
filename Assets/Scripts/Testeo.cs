@@ -5,10 +5,10 @@ using TMPro;
 
 public class Test : MonoBehaviour
 {
+    public GameObject text;
     public void Testeo()
-    {
-        GameObject text = GameObject.Find("Text");
-        string code = text.GetComponent<TextMeshProUGUI>().text;
+    { 
+        string code = text.GetComponent<TMP_InputField>().text;
         if (code == "") return;
 
         Programa.Main(code);

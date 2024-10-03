@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace GwentEngine
@@ -53,7 +54,10 @@ namespace GwentEngine
                 {
                     List<ICard> result = new List<ICard>(); //Lista que se le enviará al effecto original para targets
                     string source = cardEffect.Selector.Source;
-
+                    if (source == "parent" && cardEffect.IsPostAction)
+                    {
+                        source = cardEffect.Parent.Selector.Source;
+                    }
                     List<ICard> sourceList = SourceList(source); //Se guarda la lista que llamó el source de selector
                     List<ICard> predicateList = PredicateList(sourceList,(Predicate)cardEffect.Selector.Predicate); //Se filtra la lista anterior mediante el predicado
 
@@ -366,6 +370,19 @@ namespace GwentEngine
                         {
                             Expression expression = (Expression)instruction;
                             expression.Evaluate();
+                            if(expression is Assign)
+                            {
+                                Assign assign = (Assign)expression;
+                                if(assign.Left is DotNotation && assign.Right.Type == ExpressionType.Number)
+                                {
+                                    DotNotation dotNotation = (DotNotation)assign.Left;
+                                    if(dotNotation.Left.Type == ExpressionType.Card && dotNotation.Right.ToString() == "Power")
+                                    {
+                                        assign.Right.Evaluate();
+                                        target.Power = (double)assign.Right.Value;
+                                    }
+                                }
+                            }
                         }
                         else if (instruction is While)
                         {

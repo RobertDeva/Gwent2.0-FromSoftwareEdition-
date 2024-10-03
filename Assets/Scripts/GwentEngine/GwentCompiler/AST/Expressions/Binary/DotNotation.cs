@@ -53,7 +53,7 @@ namespace GwentEngine
                     }
                     else
                     {
-                        Type = ExpressionType.Text;
+                        Type = ExpressionType.CardProperty;
                     }
 
                     return left && right;
@@ -188,56 +188,50 @@ namespace GwentEngine
                         {
                             if (Right.Value.ToString() == "TriggerPlayer")
                             {
-                                //  string triggerPlayer = EffectExecutation.VerificatePlayer();
-                                //  Value = triggerPlayer;
+                                Player triggerPlayer = EffectExecutation.VerificatePlayer();
+                                Value = triggerPlayer;
                                 return;
                             }
                             else if (Right.Value.ToString() == "Board")
                             {
-                                //  EffectExecutation.BoardList();
-                                //  Value = EffectExecutation.board;
+                                EffectExecutation.BoardList();
+                                Value = EffectExecutation.board;
                                 return;
                             }
                             else if (Right.Value.ToString() == "Hand")
                             {
-                                List<ICard> hand = new List<ICard>();
-                                // string triggerPlayer = EffectExecutation.VerificatePlayer();
+                                List<ICard> hand;
+                                Player triggerPlayer = EffectExecutation.VerificatePlayer();
 
-                                // if (triggerPlayer == EffectExecutation.player1.name) hand = EffectExecutation.h1;
-                                // else hand = EffectCreation.h2;
-
+                                hand = triggerPlayer.Hand;
                                 Value = hand;
                                 return;
                             }
                             else if (Right.Value.ToString() == "Deck")
                             {
-                                List<ICard> deck = new List<ICard>();
-                                //  string triggerPlayer = EffectExecutation.VerificatePlayer();
+                                List<ICard> deck;
+                                Player triggerPlayer = EffectExecutation.VerificatePlayer();
 
-                                // if (triggerPlayer == EffectExecutation.player1.name) deck = EffectExecutation.deck1;
-                                // else deck = EffectExecutation.deck2;
-
-
+                                deck = triggerPlayer.Deck;
                                 Value = deck;
                                 return;
                             }
                             else if (Right.Value.ToString() == "Field")
                             {
-                                List<ICard> field = new List<ICard>();
-                                // string triggerPlayer = EffectExecutation.VerificatePlayer();
+                                List<ICard> field;
+                                Player triggerPlayer = EffectExecutation.VerificatePlayer();
 
-                                // field = EffectExecutation.FieldOfPlayerList(triggerPlayer);
+                                field = EffectExecutation.FieldOfPlayerList(triggerPlayer);
 
                                 Value = field;
                                 return;
                             }
                             else if (Right.Value.ToString() == "Graveyard")
                             {
-                                List<ICard> graveyard = new List<ICard>();
-                                // string triggerPlayer = EffectExecutation.VerificatePlayer();
+                                List<ICard> graveyard;
+                                Player triggerPlayer = EffectExecutation.VerificatePlayer();
 
-                                // if (triggerPlayer == EffectExecutation.player1.name) graveyard = EffectExecutation.g1;
-                                // else graveyard = EffectExecutation.g2;
+                                graveyard = triggerPlayer.Graveyard;
 
                                 Value = graveyard;
                                 return;
@@ -262,12 +256,12 @@ namespace GwentEngine
 
                                 bracket.Evaluate();
                                 index.Left.Value = bracket.Value;
-                                //   Value = EffectExecutation.VerificateIndexer(indexer, (List<ICard>)index.Left.Value);
+                                Value = EffectExecutation.VerificateIndexer(indexer, (List<ICard>)index.Left.Value);
                                 return;
                             }
                             else if (index.Left is Identifier)
                             {
-                                //  Value = EffectExecutation.VerificateIdentifierLeftIndexer(index.Left.ToString(), indexer);
+                                Value = EffectExecutation.VerificateIdentifierLeftIndexer(index.Left.ToString(), indexer);
                                 return;
                             }
                         }
@@ -299,7 +293,7 @@ namespace GwentEngine
                             {
                                 bracket.Right.Evaluate();
                                 ICard card = (ICard)bracket.Right.Value;
-                                // EffectExecutation.Push(list, card);
+                                EffectExecutation.Push(list, card);
                                 Value = list;
                                 return;
                             }
@@ -307,7 +301,7 @@ namespace GwentEngine
                             {
                                 bracket.Right.Evaluate();
                                 ICard card = (ICard)bracket.Right.Value;
-                                // EffectExecutation.Remove(list, card);
+                                EffectExecutation.Remove(list, card);
                                 Value = list;
                                 return;
                             }
@@ -315,27 +309,27 @@ namespace GwentEngine
                             {
                                 bracket.Right.Evaluate();
                                 ICard card = (ICard)bracket.Right.Value;
-                                //  EffectExecutation.SendBottom(list, card);
+                                EffectExecutation.SendBottom(list, card);
                                 Value = list;
                                 return;
                             }
                             else if (bracket.Left.Value.ToString() == "Pop")
                             {
-                                //  ICard card = ICard.Pop(list);
-                                //  Value = card;
+                                ICard card = EffectExecutation.Pop(list);
+                                Value = card;
                                 return;
                             }
                             else if (bracket.Left.Value.ToString() == "Find")
                             {
-                                //   EffectsDictionary.predicateList = list;
-                                //  Value = EffectExecutation.PredicateList(list, (Predicate)bracket.Right);
+                                EffectExecutation.predicateList = list;
+                                Value = EffectExecutation.PredicateList(list, (Predicate)bracket.Right);
                                 return;
                             }
                             else if (bracket.Left.Value.ToString() == "Add")
                             {
                                 bracket.Right.Evaluate();
                                 ICard card = (ICard)bracket.Right.Value;
-                                // Value = EffectExecutation.Add(list, card);
+                                Value = EffectExecutation.Add(list, card);
                                 return;
                             }
                         }
@@ -346,23 +340,23 @@ namespace GwentEngine
                             Predicate predicate = (Predicate)bracket.Right;
 
                             EffectExecutation.predicateList = list;
-                            //  List<ICard> filterList = EffectExecutation.PredicateList(list, predicate);
+                            List<ICard> filterList = EffectExecutation.PredicateList(list, predicate);
                             indexador.Right.Evaluate();
                             int indexer = (int)indexador.Right.Value;
 
-                            //  if (filterList.Count == 0)
+                            if (filterList.Count == 0)
                             {
-                                // Value = filterList;
+                                Value = filterList;
                                 return;
                             }
 
-                            //  if (indexer < 0 || indexer >= filterList.Count)
+                            if (indexer < 0 || indexer >= filterList.Count)
                             {
-                                //Value = filterList;
+                                Value = filterList;
                                 return;
                             }
 
-                            //  Value = filterList[indexer];
+                            Value = filterList[indexer];
                             return;
                         }
                     }
@@ -375,16 +369,16 @@ namespace GwentEngine
 
                         if (Right is Identifier || Right.Value.ToString() == "Owner")
                         {
-                            //  string property = EffectExecutation.CardPropertyString(card, Right.Value.ToString());
+                            object property = EffectExecutation.CardPropertyString(card, Right.Value.ToString());
                             if (Right.Value.ToString() == "Power")
                             {
-                                //  double power = double.Parse(property);
-                                //  int value = (int)power;
-                                // Value = value;
+                                double power = double.Parse((string)property);
+                                double value = (double)power;
+                                Value = value;
                                 return;
                             }
 
-                            //  Value = property;
+                            Value = property;
                             return;
                         }
                     }

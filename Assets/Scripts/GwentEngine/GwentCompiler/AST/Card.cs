@@ -127,6 +127,7 @@ namespace GwentEngine
                 inField = false;
                 AffectedByWeather = false;
                 AffectedByBuff = false;
+                range = new();
             }
 
             public void Invoke(FieldZone? zone)

@@ -8,7 +8,7 @@ namespace GwentEngine
         public class Effect : ASTNode
         {
             public string Id { get; set; }           
-            public List<Param> ParamsExpresions;
+            public List<Param> ParamsExpresions = new();
             public List<ASTNode> ActionList;
             public List<ICard> targets;
             public Card card;
@@ -33,7 +33,6 @@ namespace GwentEngine
                
                 foreach (Param parametro in ParamsExpresions)
                 {
-
                     if (parametro.TypeOfValue == TypeOfValue.Number)
                         scope.VarYValores.Add(parametro.Id, new Number(0, new CodeLocation()));
                     else if (parametro.TypeOfValue == TypeOfValue.String)
@@ -44,7 +43,7 @@ namespace GwentEngine
                 }
 
 
-                bool checkInstruction = false;
+                bool checkInstruction;
                 bool checkInstructions = true;
 
                 foreach (ASTNode instruction in ActionList)
@@ -81,6 +80,8 @@ namespace GwentEngine
             {
                 Id = id;
                 Location = location;
+                ActionList = new List<ASTNode>();
+
             }
 
         }

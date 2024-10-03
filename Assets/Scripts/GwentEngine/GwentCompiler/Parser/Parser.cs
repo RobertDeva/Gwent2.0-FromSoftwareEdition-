@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GwentEngine
 {
@@ -8,7 +9,7 @@ namespace GwentEngine
         public class Parser
         {
             public static List<CompilingError> compilingErrors = new List<CompilingError>();
-            public static List<string> keywords = new List<string>() {TokenValues.power,TokenValues.name,TokenValues.range,TokenValues.rank,TokenValues.type,TokenValues.context,TokenValues.targets};
+            public static List<string> keywords = new List<string>() {TokenValues.Faction, TokenValues.Rank};
             public Parser(TokenStream stream)
             {
                 Stream = stream;
@@ -166,14 +167,21 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "[ expected"));
                 }
-                while (Stream.Next(TokenType.Text) || Stream.Next(TokenValues.ValueSeparator) || !Stream.End)
+                while (Stream.Position < Stream.count)
                 {
+                   if(!Stream.Next(TokenType.Text))
+                   {
+                        Stream.MoveNext(1);
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "text expected"));
+                   }
+                   else
+                   card.range.Add(Stream.LookAhead().Value);
                    if(Stream.Next(TokenValues.ValueSeparator))
                    {
-                        if (!Stream.Next(TokenType.Text))
-                        {
-                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "text expected"));
-                        }
+                   }
+                   else
+                   {  
+                        break;
                    }
                 }
                 if (!Stream.Next(TokenValues.ClosedBraces))
@@ -192,7 +200,7 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
-                if (Stream.Next(TokenType.Text))
+                if (!Stream.Next(TokenType.Text))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Invalid assignament"));
                 }
@@ -228,22 +236,30 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OnActivation expected"));
                 }
+                if (!Stream.Next(TokenValues.TwoPoints))
+                {
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
+                }
                 if (!Stream.Next(TokenValues.OpenBraces))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "[ expected"));
                 }
-                while (!Stream.Next(TokenValues.ClosedBraces) || Stream.Position >= Stream.count)
+                while (Stream.Position < Stream.count)
                 {
-                    if (!Stream.Next(TokenValues.OpenCurlyBraces))
+                    Stream.MoveNext(1);
+                    if (Stream.LookAhead().Value == TokenValues.ClosedBraces)
                     {
-                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "{ expected"));
+                        break; 
                     }
-                    if (!Stream.Next(TokenValues.Effect))
+                    if (Stream.LookAhead().Value == TokenValues.OpenCurlyBraces)
                     {
-                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Effect expected"));
+                        if (!Stream.Next(TokenValues.Effect))
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Effect expected"));
+                        }
+                        else
+                        effects.Add(ParseEffects(errors, false, null));
                     }
-                    else
-                    effects.Add(ParseEffects(errors, false, null));                    
                 }
                 Stream.MoveBack(1);
             }
@@ -251,13 +267,8 @@ namespace GwentEngine
             {
                 CardEffect effect = new CardEffect(isPostAct, Stream.LookAhead().Location);
                 if(isPostAct)
-                {
-                    if (parent != null)
-                    {
-                        effect.Parent = parent;
-                    }
-                    else
-                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "effect parent expected"));
+                {                    
+                     effect.Parent = parent;                    
                 }
                 
                 if (!Stream.Next(TokenValues.TwoPoints))
@@ -270,8 +281,7 @@ namespace GwentEngine
                     effect.Params = null;
                 }
                 else if (!Stream.Next(TokenValues.OpenCurlyBraces))
-                {
-                    
+                {                    
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "{ expected"));
                     
                     if (!Stream.Next("Name"))
@@ -294,46 +304,54 @@ namespace GwentEngine
                     {
                         errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ", expected"));
                     }
-                    while (!Stream.Next(TokenValues.ClosedCurlyBraces) || !Stream.End)
+                    if (Stream.LookAhead(1).Value != TokenValues.ClosedCurlyBraces)
                     {
-                        string param;
-                        Expression exp;
-                        if(!Stream.Next(TokenType.Identifier))
+                        while (Stream.Position < Stream.count)
                         {
-                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Identifier expected"));
-                            break;
-                        }
-                        else
-                        {
-                            param = Stream.LookAhead().Value;
-                        }
-                        if (!Stream.Next(TokenValues.TwoPoints))
-                        {
-                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
-                        }
-                        exp = ParseExpression();
-                        if(exp == null)
-                        {
-                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
-                            break;
-                        }
-                        if (Stream.LookAhead(1).Value != TokenValues.ClosedCurlyBraces)
-                        {
+                            if (Stream.Next(TokenValues.ClosedCurlyBraces))
+                            {
+                                break;
+                            }
+                            string param;
+                            Expression exp;
+                            if (!Stream.Next(TokenType.Identifier))
+                            {
+                                errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Identifier expected"));
+                                break;
+                            }
+                            else
+                            {
+                                param = Stream.LookAhead().Value;
+                            }
+                            if (!Stream.Next(TokenValues.TwoPoints))
+                            {
+                                errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
+                            }
+                            exp = ParseExpression();
+                            if (exp == null)
+                            {
+                                errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad expression"));
+                            }
                             if (!Stream.Next(TokenValues.ValueSeparator))
                             {
                                 errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ", expected"));
                             }
+                            ParamValue Param;
+                            Param = new(param, exp);
+                            effect.Params.Add(Param);
                         }
-                        ParamValue Param;
-                        Param = new(param, exp);
-                        effect.Params.Add(Param);
+                        Stream.MoveBack(1);
+                        if (!Stream.Next(TokenValues.ClosedCurlyBraces))
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "} expected"));
+                        }
                     }
                 }
-                if(!Stream.Next(TokenValues.ValueSeparator))
+                if (!Stream.Next(TokenValues.ValueSeparator))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ", expected"));
                 }
-                if(Stream.LookAhead(1).Value == "Selector")
+                if (Stream.LookAhead(1).Value == "Selector")
                 {
                     Stream.MoveNext(1);
                     effect.Selector = ParseSelector(errors);
@@ -352,7 +370,7 @@ namespace GwentEngine
                     {
                         effect.Selector = new Selector(Stream.LookAhead().Location);
                         effect.Selector.Source = "board";
-                        effect.Selector.Single = new Bool(true, Stream.LookAhead().Location);
+                        effect.Selector.Single = new Bool(false, Stream.LookAhead().Location);
                         effect.Selector.Predicate = null;
                     }
                 }
@@ -445,7 +463,7 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
                 }
-                Expression pred = ParseExpression();
+                Expression pred = ParsePredicate(errors);
                 if (pred == null)
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Invalid, "Bad Expression"));
@@ -469,54 +487,43 @@ namespace GwentEngine
             {
 
                 Effect effect = new Effect("null", Stream.LookAhead().Location);
-
-
                 if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "{ Expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
                 }
-
-                if (!Stream.Next(TokenValues.name)) // Name
+                if (!Stream.Next("Name")) // Name
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "name Expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Name Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.TwoPoints)) //:
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": Expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
                 }
-
                 if (!Stream.Next(TokenType.Text)) // Text
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Text Expected"));
                 }
-
+                else
                 effect.Id = Stream.LookAhead().Value; //Se añade el nombre al effecto
-
-                if (!Stream.Next(TokenValues.StatementSeparator)) // ,
+                if (!Stream.Next(TokenValues.ValueSeparator)) // ,
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; Expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
                 }
-
                 if (Stream.LookAhead(1).Value == TokenValues.Params) // Params
                 {
                     Stream.MoveNext(1);
-
                     if (!Stream.Next(TokenValues.TwoPoints)) // :
                     {
-                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": Expected"));
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
                     }
-
                     if (!Stream.Next(TokenValues.OpenCurlyBraces)) // {
                     {
-                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "{ Expected"));
+                        errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenCurlyBraces Expected"));
                     }
-
                     if (!Stream.Next(TokenValues.ClosedCurlyBraces)) //Si no hay una llave cerrada entra
                     {
                         ParseParams(errors, effect);
-                    } 
-
+                    } // }
                     if (!Stream.Next(TokenValues.ValueSeparator)) // ,
                     {
                         errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "ValueSeparator Expected"));
@@ -527,7 +534,6 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Action Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.TwoPoints)) //:
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints Expected"));
@@ -536,22 +542,18 @@ namespace GwentEngine
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "OpenBracket Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.targets)) //targets
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "targets Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.ValueSeparator)) // ,
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "targets Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.context)) // context
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "context Expected"));
                 }
-
                 if (!Stream.Next(TokenValues.ClosedBracket)) // )
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "context Expected"));
@@ -596,14 +598,15 @@ namespace GwentEngine
                 if (!Stream.Next(TokenType.Identifier))
                 {
                     errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "Id expected"));
+                    return false;
                 }
+                else
                 id = Stream.LookAhead().Value;
 
                 if (!Stream.Next(TokenValues.TwoPoints))
                 {
-                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ": expected"));
+                    errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "TwoPoints expected"));
                 }
-
                 Stream.MoveNext(1);
 
                 if (Stream.LookAhead().Value == TokenValues.Bool) typeOfValue = TypeOfValue.Bool;
@@ -623,20 +626,31 @@ namespace GwentEngine
             }
             private void ParseAction(List<CompilingError> errors, List<ASTNode> actionList) //Parsea el Action de Effect, parece ser que hay que darle de parametro un objeto especifico para que almacene expresiones de AST
             {
-                while (Stream.Position < Stream.count || Stream.Next(TokenValues.ClosedCurlyBraces)) //Recorre mientras hallan instrucciones
+                while (Stream.Position < Stream.count) //Recorre mientras hallan instrucciones
                 {
                     if (Stream.Next(TokenValues.While)) //Parsea instrucciones while
                     {
                         ParseWhile(errors, actionList);
+                        if (!Stream.Next(TokenValues.StatementSeparator)) //Verificar ; despues de cada instruccion
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
+                        }
                     }
                     else if (Stream.Next(TokenValues.For)) //Parsea instrucciones for
                     {
                         ParseFor(errors, actionList);
+                        if (!Stream.Next(TokenValues.StatementSeparator)) //Verificar ; despues de cada instruccion
+                        {
+                            errors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "; expected"));
+                        }
+                    }
+                    else if (Stream.Next(TokenValues.ClosedCurlyBraces))   //Si se encuentra una } entonces se acaba el ciclo
+                    {
+                        break;
                     }
                     else // si no es un while o un for , entonces es una expresiom
                     {
                         Expression? exp = ParseExpression();
-
                         if (exp == null)
                         {
                             Stream.MoveNext(1);
@@ -826,14 +840,11 @@ namespace GwentEngine
                 else faction.Value = Stream.LookAhead().Value;
                 return faction;
             }
-
             private Expression? ParseExpression()
             {
-                return ParseExpressionLv0(null);
+                Expression exp = ParseExpressionLv0(null);
+                return exp;
             }
-
-            
-
             private Expression? ParseExpressionLv0(Expression? left)
             {
                 Expression? newleft = ParseExpressionLv01(left);
@@ -849,6 +860,11 @@ namespace GwentEngine
                     return exp;
                 }
                 exp = ParseAnd(left);
+                if (exp != null)
+                {
+                    return exp;
+                }
+                exp = ParseAssign(left);
                 if (exp != null)
                 {
                     return exp;
@@ -870,11 +886,6 @@ namespace GwentEngine
                     return exp;
                 }
                 exp = ParseDiferent(left);
-                if (exp != null)
-                {
-                    return exp;
-                }
-                exp = ParseAssign(left);
                 if (exp != null)
                 {
                     return exp;
@@ -975,7 +986,7 @@ namespace GwentEngine
 
             private Expression? ParseExpressionLv3(Expression? left)
             {
-                
+
                 Expression? exp = ParseInBrackectExpression();
                 if (exp != null)
                 {
@@ -996,6 +1007,13 @@ namespace GwentEngine
                 {
                     return exp;
                 }
+                exp = ParseIdentifierKeyWord();
+                if(exp != null)
+                {
+                    exp = ParseIndexer(compilingErrors, exp);
+                    exp = ParseBracket(compilingErrors, exp);
+                    return exp;
+                }
                 exp = ParseIdentifier();
                 if (exp != null)
                 {
@@ -1003,7 +1021,7 @@ namespace GwentEngine
                     exp = ParseBracket(compilingErrors, exp);                    
                     return exp;   
                 }
-                return null;
+                return left;
             }
 
             private Expression ParseBracket(List<CompilingError> errors, Expression expression)
@@ -1190,7 +1208,7 @@ namespace GwentEngine
                     return null;
                 }
                 assign.Left = left;
-                Expression? right = ParseExpressionLv02(null);
+                Expression? right = ParseExpressionLv01(null);
                 if (right == null)
                 {
                     Stream.MoveBack(2);
@@ -1315,7 +1333,7 @@ namespace GwentEngine
                     return null;
                 }
                 dotNotation.Right = right;
-
+                Debug.Log(dotNotation.ToString());
                 return ParseExpressionLv1_(dotNotation);
             }
 
@@ -1431,18 +1449,31 @@ namespace GwentEngine
 
             private Expression? ParseBool()
             {
-                if (!Stream.Next(TokenValues.True) || !Stream.Next(TokenValues.False))
-                     return null;
-                return new Bool(bool.Parse(Stream.LookAhead().Value), Stream.LookAhead().Location);
+                if (!Stream.Next(TokenType.Keyword))  return null;
+                if (Stream.LookAhead().Value == TokenValues.True || Stream.LookAhead().Value == TokenValues.False)
+                    return new Bool(bool.Parse(Stream.LookAhead().Value), Stream.LookAhead().Location);
+                else return null;
             }
             private Expression? ParseIdentifier()
             {
-                if (!Stream.Next(TokenType.Identifier) || (!Stream.Next(TokenType.Keyword) && !keywords.Contains(Stream.LookAhead().Value))) return null;
+                if (!Stream.Next(TokenType.Identifier)) return null;
                 return new Identifier(Stream.LookAhead().Value, Stream.LookAhead().Location);
+            }
+            private Expression? ParseIdentifierKeyWord()
+            {
+                if (Stream.Next("Type") || Stream.Next("Name") || Stream.Next("Faction") || Stream.Next("Power") || Stream.Next("Rank") || Stream.Next("Range"))
+                {
+                    return new Keyword(Stream.LookAhead().Value, Stream.LookAhead().Location);
+                }
+                else if(Stream.Next(TokenType.Keyword) && keywords.Contains(Stream.LookAhead().Value))
+                {
+                    return new Keyword(Stream.LookAhead().Value, Stream.LookAhead().Location);
+                }
+                return null;
             }
             private Expression? ParseInBrackectExpression()
             {
-                InBracketExpression inBracket = new InBracketExpression(Stream.LookAhead().Location);
+                InBracketExpression inBracket = new InBracketExpression(null,Stream.LookAhead().Location);
                 if(!Stream.Next(TokenValues.OpenBracket))
                     return null;
 
@@ -1450,7 +1481,7 @@ namespace GwentEngine
                 if(inBracket.InnerExpression == null)
                     return null;
                 if (!Stream.Next(TokenValues.ClosedBracket))
-                    compilingErrors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, "( expected"));
+                    compilingErrors.Add(new CompilingError(Stream.LookAhead().Location, ErrorCode.Expected, ") expected"));
                 return inBracket;
             }
         }

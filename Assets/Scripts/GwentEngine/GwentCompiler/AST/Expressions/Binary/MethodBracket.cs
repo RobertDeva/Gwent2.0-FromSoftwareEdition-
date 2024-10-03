@@ -15,7 +15,75 @@ namespace GwentEngine
             public MethodBracket(CodeLocation location) : base(location) { }
 
             public override void Evaluate()
-            { }
+            {
+                if (Right != null) Right.Evaluate();
+                Left.Evaluate();
+
+                List<ICard> list = new();
+
+                if (Left.Value.ToString() == "HandOfPlayer")
+                {
+                    Player triggerPlayer;
+                    if (Right.Value.ToString() == "triggerPlayer")
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer();
+                    }
+                    else
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer().Oponent;
+                    }
+                    list = triggerPlayer.Hand;
+                    Value = list;
+                    return;
+                }
+                else if (Left.Value.ToString() == "DeckOfPlayer")
+                {
+                    Player triggerPlayer;
+                    if (Right.ToString() == "context.triggerPlayer")
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer();
+                    }
+                    else
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer().Oponent;
+                    }
+                    list = triggerPlayer.Deck;
+                    Value = list;
+                    return;
+                }
+                else if (Left.Value.ToString() == "FieldOfPlayer")
+                {
+                    Player triggerPlayer; 
+                    if(Right.ToString() == "context.triggerPlayer")
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer();
+                    }
+                    else
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer().Oponent;
+                    }
+                    list = EffectExecutation.FieldOfPlayerList(triggerPlayer);
+
+                    Value = list;
+                    return;
+                }
+                else if (Left.Value.ToString() == "GraveyardOfPlayer")
+                {
+                    Player triggerPlayer;
+                    if (Right.ToString() == "context.triggerPlayer")
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer();
+                    }
+                    else
+                    {
+                        triggerPlayer = EffectExecutation.VerificatePlayer().Oponent;
+                    }
+                    list = triggerPlayer.Graveyard;
+
+                    Value = list;
+                    return;
+                }
+            }
 
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
@@ -123,6 +191,18 @@ namespace GwentEngine
                     Type = ExpressionType.ErrorType;
                     return false;
                 }
+            }
+
+            public override string ToString()
+            {
+                string left = Left.ToString();
+                string right;
+                if (Right == null)
+                {
+                    right = " ";
+                }
+                else right = Right.ToString();
+                return String.Format("{0}({1})", left, right);
             }
 
         }

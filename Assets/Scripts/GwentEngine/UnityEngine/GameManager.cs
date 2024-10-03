@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Board.GetComponent<GameBoard>().StartGame();
     }
 
     // Update is called once per frame
@@ -27,11 +26,19 @@ public class GameManager : MonoBehaviour
     {
         TotalAttackP1.text = Player1.GetComponent<GwentPlayer>().TotalPower.ToString();
         TotalAttackP2.text = Player2.GetComponent<GwentPlayer>().TotalPower.ToString();
+        if(arranque)
+        {
+            if(Player1.GetComponent<GwentPlayer>().HasPassed && Player2.GetComponent<GwentPlayer>().HasPassed)
+            {
+                EndedRound();
+            }
+        }
     }
     //Metodo para arrancar el juego desde el boton de continuar 2
     public void ArrancarJuego()
     {
         arranque = true;
+        Board.GetComponent<GameBoard>().StartGame();
     }
 
     //Metodo para cambiar turnos (en el inspector, el jugador 1 tiene el turno en true y el 2 en false, por tanto este metodo alternará el true de los jugadores)

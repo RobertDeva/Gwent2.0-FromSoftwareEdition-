@@ -19,9 +19,9 @@ namespace GwentEngine
             }
             public override object Value { get; set; }
 
-            public InBracketExpression(CodeLocation location): base(location)
+            public InBracketExpression(Expression exp,CodeLocation location): base(location)
             {
-               Value = InnerExpression.Value;
+               InnerExpression = exp;
             }
             public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
             {
@@ -31,11 +31,13 @@ namespace GwentEngine
             public override void Evaluate()
             {
                 InnerExpression.Evaluate();
+                Value = InnerExpression.Value;
             }
 
             public override string ToString()
             {
-                return String.Format("({0})", Value);
+                string x = InnerExpression.ToString();
+                return String.Format("({0})", x);
             }
         }
     }

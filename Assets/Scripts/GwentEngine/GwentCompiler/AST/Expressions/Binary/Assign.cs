@@ -28,7 +28,17 @@ namespace GwentEngine
                     {
                         EffectExecutation.identifiers[Left.Value.ToString()] = Right;
                     }
-
+                }
+                if (Left is DotNotation)
+                {
+                    DotNotation dotNotation = (DotNotation)Left;
+                    if (dotNotation.Left.Type == ExpressionType.Card)
+                    {
+                        if(dotNotation.Right.Type == ExpressionType.Number)
+                        {
+                            dotNotation.Value = Right.Value;
+                        }
+                    }
                 }
             }
 

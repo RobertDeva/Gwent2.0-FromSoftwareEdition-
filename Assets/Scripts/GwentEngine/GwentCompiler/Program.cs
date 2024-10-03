@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Programa
 {
+	public static bool IsFirstAssign = false;
+	public static bool ValidToGenerate = false;
+	public static ElementalProgram elementalProgram;
+
 	public static void Main(string code)
 	{
 		LexicalAnalyzer lexical = Compiling.Lexical;
@@ -21,14 +25,17 @@ public class Programa
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//Parsing
-		Debug.Log("Parser");
+		Debug.Log("Primer parser");
 
 		TokenStream stream = new TokenStream(tokens);
+		Debug.Log(stream.count.ToString());
 		Parser parser = new Parser(stream);
 
 		List<CompilingError> errors = new List<CompilingError>();
 
 		ElementalProgram program = parser.ParseProgram(errors);
+		Dictionarys.effects = program.Effects;
+		Dictionarys.cards = program.Cards;
 
 		foreach (CompilingError error in Parser.compilingErrors)
 		{
@@ -39,6 +46,30 @@ public class Programa
 			foreach (CompilingError error in errors)
 			{
 				Debug.Log(error.Location.Line + " " + error.Code + " " + error.Argument);
+			}
+		}
+		else
+		{
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//Chequeo semantico
+			Context context = new Context();
+			Scope scope = new Scope();
+
+
+			program.CheckSemantic(context, scope, errors);
+
+			if (errors.Count > 0)
+			{
+				foreach (CompilingError error in errors)
+				{
+					Debug.Log(error.Location.Line + ", " + error.Code + ", " + error.Argument);
+				}
+			}
+			else
+			{
+				Debug.Log("Chequeo semantico finalizado");
+				ValidToGenerate = true;
+				elementalProgram = program;
 			}
 		}
 	}

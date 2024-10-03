@@ -38,6 +38,7 @@ namespace GwentEngine
                         __LexicalProcess.RegisterOperator(">=", TokenValues.GreatherEqual);
                         __LexicalProcess.RegisterOperator("<=", TokenValues.LessEqual);
                         __LexicalProcess.RegisterOperator("=>", TokenValues.Implication);
+                        __LexicalProcess.RegisterOperator(".", TokenValues.InnerSeparator);
 
 
                         __LexicalProcess.RegisterOperator(".", TokenValues.InnerSeparator);
@@ -60,9 +61,6 @@ namespace GwentEngine
                         __LexicalProcess.RegisterKeyword("name", TokenValues.name);
                         __LexicalProcess.RegisterKeyword("Effect", TokenValues.Effect);
                         __LexicalProcess.RegisterKeyword("power", TokenValues.power);
-                        __LexicalProcess.RegisterKeyword("Faction", TokenValues.Faction);
-                        __LexicalProcess.RegisterKeyword("CardType", TokenValues.CardType);
-                        __LexicalProcess.RegisterKeyword("Rank", TokenValues.Rank);
                         __LexicalProcess.RegisterKeyword("true", TokenValues.True);
                         __LexicalProcess.RegisterKeyword("false", TokenValues.False);
                         __LexicalProcess.RegisterKeyword("range", TokenValues.range);
@@ -73,12 +71,10 @@ namespace GwentEngine
                         __LexicalProcess.RegisterKeyword("type", TokenValues.type);
                         __LexicalProcess.RegisterKeyword("description", TokenValues.description);
                         __LexicalProcess.RegisterKeyword("Action", TokenValues.Action);
-                        __LexicalProcess.RegisterKeyword("context", TokenValues.context);
                         __LexicalProcess.RegisterKeyword("targets", TokenValues.targets);
                         __LexicalProcess.RegisterKeyword("Bool", TokenValues.Bool);
                         __LexicalProcess.RegisterKeyword("String", TokenValues.String);
                         __LexicalProcess.RegisterKeyword("Number", TokenValues.Number);
-                        __LexicalProcess.RegisterKeyword("target", TokenValues.target);
                         __LexicalProcess.RegisterKeyword("OnActivation", TokenValues.OnActivation);
                     }
 

@@ -7,17 +7,11 @@ public class CardImages : MonoBehaviour
 {
     public static Dictionary<ICard,Sprite> CardImagesColection = new();
 
-    public Sprite sss;
-    public Sprite ddd;
-    public Sprite aaa;
-    public Sprite bbb;
-    public Sprite ccc;
-    public Sprite eee;
-    public Sprite gender;
-    public Sprite hender;
-    public Sprite female;
-    public Sprite grain;
-    public Sprite brain;
+    public static Sprite EldenRing;
+    public static Sprite DarkSouls;
+    public static Sprite Sekiro;
+    public static Sprite Compileted;
+    
        
     // Start is called before the first frame update
     void Start()
